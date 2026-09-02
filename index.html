@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Power Health Club</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="Icon.jpg">
+<meta name="theme-color" content="#00b4ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Poppins:wght@300;400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Exo+2:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#00b4ff;--primary-dark:#0080cc;--accent:#ff6b00;
+  --bg:#0a0a1a;--bg2:#111126;--bg3:#1a1a35;
+  --card:#161630;--card2:#1e1e40;
+  --text:#e0e8ff;--text2:#a0aed0;--text3:#6070a0;
+  --border:#2a2a55;--border2:#3a3a70;
+  --success:#00cc66;--warning:#ffaa00;--danger:#ff3355;
+  --font-head:'Orbitron',sans-serif;
+  --font-body:'Poppins','Noto Sans Devanagari',sans-serif;
+  --radius:12px;--radius-sm:8px;--radius-lg:20px;
+  --shadow:0 4px 20px rgba(0,180,255,0.15);
+  --glow:0 0 20px rgba(0,180,255,0.4);
+  --transition:all 0.3s cubic-bezier(.4,0,.2,1);
+}
+[data-theme="light"]{--bg:#f0f4ff;--bg2:#e8eeff;--bg3:#dde5ff;--card:#ffffff;--card2:#f5f8ff;--text:#1a1a3a;--text2:#3a3a6a;--text3:#7080aa;--border:#c0ccee;--border2:#a0b0dd;}
+[data-accent="red"]{--primary:#ff3366;--primary-dark:#cc1144;}
+[data-accent="green"]{--primary:#00cc66;--primary-dark:#009944;}
+[data-accent="purple"]{--primary:#9966ff;--primary-dark:#6633cc;}
+[data-accent="orange"]{--primary:#ff6600;--primary-dark:#cc4400;}
+[data-accent="gold"]{--primary:#ffaa00;--primary-dark:#cc8800;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden;position:relative;}
+#canvas-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+#bg-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;background-image:url('Background.png');background-size:cover;background-position:center;opacity:0.08;pointer-events:none;}
+#app{position:relative;z-index:2;min-height:100vh;}
+header{background:linear-gradient(135deg,rgba(10,10,26,0.97),rgba(17,17,38,0.97));backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 30px rgba(0,180,255,0.2);}
+.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 0;gap:12px;}
+.header-left{display:flex;align-items:center;gap:12px;flex:1;}
+.gym-logo{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);box-shadow:var(--glow);flex-shrink:0;}
+.gym-info h1{font-family:var(--font-head);font-size:clamp(14px,3.5vw,22px);font-weight:900;letter-spacing:2px;background:linear-gradient(135deg,#ffffff,var(--primary),#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+.location-link{display:inline-flex;align-items:center;gap:4px;color:var(--primary);font-size:12px;text-decoration:none;font-weight:600;transition:var(--transition);margin-top:2px;}
+.location-link:hover{color:#fff;text-shadow:0 0 10px var(--primary);}
+.loc-icon{animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.2);}}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.icon-btn{background:rgba(0,180,255,0.1);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:50%;cursor:pointer;font-size:18px;transition:var(--transition);position:relative;display:flex;align-items:center;justify-content:center;width:40px;height:40px;}
+.icon-btn:hover{background:rgba(0,180,255,0.3);border-color:var(--primary);box-shadow:var(--glow);}
+.notif-badge{position:absolute;top:-2px;right:-2px;background:var(--danger);color:#fff;font-size:9px;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.auth-btn{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none;padding:8px 16px;border-radius:var(--radius);cursor:pointer;font-weight:700;font-size:13px;transition:var(--transition);font-family:var(--font-body);}
+.auth-btn:hover{transform:translateY(-2px);box-shadow:var(--glow);}
+.header-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);transition:var(--transition);cursor:pointer;}
+.header-avatar:hover{box-shadow:var(--glow);}
+.member-tick-sm{position:absolute;bottom:-2px;right:-2px;background:var(--success);border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:8px;border:2px solid var(--bg);color:#fff;}
+nav{background:rgba(10,10,26,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;position:sticky;top:76px;z-index:99;}
+nav::-webkit-scrollbar{display:none;}
+.nav-inner{display:flex;align-items:center;gap:4px;padding:8px 16px;max-width:1200px;margin:0 auto;min-width:max-content;}
+.nav-btn{background:transparent;border:1px solid transparent;color:var(--text2);padding:8px 14px;border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:600;transition:var(--transition);white-space:nowrap;font-family:var(--font-body);display:flex;align-items:center;gap:6px;}
+.nav-btn:hover,.nav-btn.active{background:rgba(0,180,255,0.15);border-color:var(--primary);color:var(--primary);}
+.nav-btn.active{box-shadow:0 0 15px rgba(0,180,255,0.2);}
+.notif-panel{position:fixed;top:80px;right:16px;width:320px;background:var(--card);border:1px solid var(--border2);border-radius:var(--radius-lg);box-shadow:0 10px 40px rgba(0,0,0,0.5);z-index:200;display:none;max-height:70vh;overflow-y:auto;}
+.notif-panel.show{display:block;}
+.notif-header{padding:16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.notif-header h3{font-size:15px;color:var(--primary);}
+.notif-item{padding:12px 16px;border-bottom:1px solid var(--border);transition:var(--transition);cursor:pointer;}
+.notif-item:hover{background:var(--card2);}
+.notif-item.unread{border-left:3px solid var(--primary);}
+.notif-item p{font-size:13px;line-height:1.5;}
+.notif-time{font-size:11px;color:var(--text3);margin-top:4px;}
+.notif-empty{padding:32px;text-align:center;color:var(--text3);}
+main{max-width:1200px;margin:0 auto;padding:20px 16px;min-height:60vh;}
+section{display:none;}
+section.active{display:block;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);transition:var(--transition);}
+.card:hover{border-color:var(--border2);box-shadow:0 6px 30px rgba(0,180,255,0.2);}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.section-title{font-family:var(--font-head);font-size:clamp(18px,4vw,28px);font-weight:700;color:var(--primary);text-shadow:0 0 20px rgba(0,180,255,0.3);margin-bottom:8px;}
+.section-sub{color:var(--text2);font-size:14px;margin-bottom:20px;}
+.section-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+.translate-btn{background:rgba(0,180,255,0.1);border:1px solid var(--primary);color:var(--primary);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:700;transition:var(--transition);display:inline-flex;align-items:center;gap:6px;}
+.translate-btn:hover{background:var(--primary);color:#fff;}
+.tab-group{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.tab-btn{background:var(--card);border:1px solid var(--border);color:var(--text2);padding:8px 16px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;transition:var(--transition);font-family:var(--font-body);}
+.tab-btn.active,.tab-btn:hover{background:var(--primary);border-color:var(--primary);color:#fff;}
+.hero{text-align:center;padding:40px 20px;background:linear-gradient(135deg,rgba(0,180,255,0.05),rgba(0,0,0,0));border-radius:var(--radius-lg);margin-bottom:30px;border:1px solid var(--border);position:relative;overflow:hidden;}
+.hero-logo{width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid var(--primary);box-shadow:var(--glow);margin:0 auto 16px;display:block;}
+.hero h2{font-family:var(--font-head);font-size:clamp(20px,5vw,36px);font-weight:900;letter-spacing:3px;background:linear-gradient(135deg,#fff,var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+.tagline{color:var(--primary);font-size:18px;font-weight:700;font-family:var(--font-head);letter-spacing:2px;}
+.timing-banner{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--primary);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;}
+.timing-icon{font-size:24px;flex-shrink:0;margin-top:2px;}
+.timing-info h3{color:var(--primary);font-size:15px;font-weight:700;margin-bottom:6px;}
+.timing-info p{color:var(--text);font-size:13px;line-height:1.8;white-space:pre-line;}
+.social-section{margin-top:40px;text-align:center;}
+.social-section h3{font-family:var(--font-head);color:var(--primary);margin-bottom:20px;font-size:18px;}
+.social-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+.social-link{display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:var(--text2);transition:var(--transition);padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);min-width:90px;}
+.social-link:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-4px);box-shadow:var(--glow);}
+.s-icon{font-size:28px;}
+.s-name{font-size:12px;font-weight:700;}
+.social-link.pending{opacity:0.5;cursor:default;}
+footer{background:rgba(10,10,26,0.98);border-top:1px solid var(--border);padding:30px 16px;margin-top:60px;text-align:center;}
+.footer-inner{max-width:1200px;margin:0 auto;}
+.footer-logo{width:60px;height:60px;border-radius:50%;object-fit:cover;margin:0 auto 12px;display:block;border:2px solid var(--primary);}
+.owner-name{font-family:'Orbitron',sans-serif;font-size:16px;color:var(--primary);font-weight:700;letter-spacing:2px;margin-bottom:4px;}
+.owner-label{font-size:12px;color:var(--text3);}
+.dev-credit{margin-top:16px;font-size:11px;color:var(--text3);}
+.dev-name{font-family:'Exo 2',sans-serif;font-size:14px;color:var(--accent);font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+.footer-divider{border:none;border-top:1px solid var(--border);margin:16px auto;width:80%;}
+/* PROFILE RINGS */
+.profile-ring-wrapper{position:relative;display:inline-block;}
+.profile-img-circle{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--border);display:block;}
+.avatar-default{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-dark));display:flex;align-items:center;justify-content:center;font-size:40px;color:#fff;font-weight:900;border:3px solid var(--border);}
+/* ========= PROFESSIONAL RANK RINGS ========= */
+/* Silver Ring */
+.ring-silver .profile-img-circle,
+.ring-silver .avatar-default{
+  border:4px solid transparent;
+  background-clip:padding-box;
+  box-shadow:0 0 0 3px #c0c0c0,0 0 20px rgba(192,192,192,0.5),0 0 40px rgba(192,192,192,0.2);
+  animation:silverPulse 3s ease-in-out infinite;
+}
+@keyframes silverPulse{0%,100%{box-shadow:0 0 0 3px #c0c0c0,0 0 18px rgba(192,192,192,0.5);}50%{box-shadow:0 0 0 4px #e8e8e8,0 0 30px rgba(220,220,220,0.8);}}
+
+/* Gold Ring */
+.ring-gold .profile-img-circle,
+.ring-gold .avatar-default{
+  box-shadow:0 0 0 3px #ffd700,0 0 22px rgba(255,215,0,0.7),0 0 45px rgba(255,200,0,0.3);
+  animation:goldPulse 2.5s ease-in-out infinite;
+}
+@keyframes goldPulse{0%,100%{box-shadow:0 0 0 3px #ffd700,0 0 20px rgba(255,215,0,0.6);}50%{box-shadow:0 0 0 5px #ffec6a,0 0 35px rgba(255,215,0,0.95),0 0 60px rgba(255,200,0,0.4);}}
+
+/* Platinum Ring */
+.ring-platinum .profile-img-circle,
+.ring-platinum .avatar-default{
+  box-shadow:0 0 0 3px #a9a9a9,0 0 25px rgba(229,228,226,0.9),0 0 50px rgba(200,200,200,0.4);
+  animation:platinumSpin 4s linear infinite;
+  outline:2px dashed rgba(229,228,226,0.4);
+  outline-offset:6px;
+}
+@keyframes platinumSpin{0%,100%{box-shadow:0 0 0 3px #e5e4e2,0 0 25px rgba(229,228,226,0.8);}50%{box-shadow:0 0 0 5px #fff,0 0 40px rgba(255,255,255,0.9),0 0 70px rgba(200,200,200,0.5);}}
+
+/* Diamond Ring */
+.ring-diamond .profile-img-circle,
+.ring-diamond .avatar-default{
+  box-shadow:0 0 0 3px #00d4ff,0 0 30px rgba(0,212,255,0.9),0 0 60px rgba(0,212,255,0.4),inset 0 0 20px rgba(0,212,255,0.1);
+  animation:diamondGlow 2s ease-in-out infinite;
+}
+@keyframes diamondGlow{0%,100%{box-shadow:0 0 0 3px #00d4ff,0 0 28px rgba(0,212,255,0.8),0 0 55px rgba(0,212,255,0.3);}50%{box-shadow:0 0 0 5px #7fffff,0 0 45px rgba(0,255,255,1),0 0 80px rgba(0,212,255,0.6);}}
+
+/* Legendary Ring - full animated rainbow */
+.ring-legendary .profile-img-circle,
+.ring-legendary .avatar-default{
+  animation:legendaryRing 3s linear infinite;
+  position:relative;
+}
+@keyframes legendaryRing{
+  0%  {box-shadow:0 0 0 4px #ff0080,0 0 30px rgba(255,0,128,0.9),0 0 70px rgba(255,0,128,0.4);}
+  20% {box-shadow:0 0 0 4px #ff6600,0 0 30px rgba(255,102,0,0.9),0 0 70px rgba(255,102,0,0.4);}
+  40% {box-shadow:0 0 0 4px #ffd700,0 0 30px rgba(255,215,0,0.9),0 0 70px rgba(255,215,0,0.4);}
+  60% {box-shadow:0 0 0 4px #00ff80,0 0 30px rgba(0,255,128,0.9),0 0 70px rgba(0,255,128,0.4);}
+  80% {box-shadow:0 0 0 4px #00b4ff,0 0 30px rgba(0,180,255,0.9),0 0 70px rgba(0,180,255,0.4);}
+  100%{box-shadow:0 0 0 4px #ff0080,0 0 30px rgba(255,0,128,0.9),0 0 70px rgba(255,0,128,0.4);}
+}
+
+/* Member active tick */
+.member-tick{
+  position:absolute;bottom:2px;right:2px;
+  background:linear-gradient(135deg,#00cc66,#00ff88);
+  border-radius:50%;width:24px;height:24px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;border:2px solid var(--bg);color:#fff;font-weight:900;
+  box-shadow:0 0 10px rgba(0,204,102,0.8);
+  animation:tickBounce 2s ease-in-out infinite;
+}
+@keyframes tickBounce{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+
+/* ========= PREMIUM RANK BADGE PILLS ========= */
+.rank-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 14px;border-radius:30px;
+  font-size:12px;font-weight:800;letter-spacing:1.5px;
+  margin-top:8px;text-transform:uppercase;
+  box-shadow:0 2px 12px rgba(0,0,0,0.3);
+  position:relative;overflow:hidden;
+}
+.rank-badge::before{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);
+  animation:badgeShine 3s infinite;
+}
+@keyframes badgeShine{0%{left:-100%;}60%,100%{left:200%;}}
+
+.rank-none{background:rgba(80,80,100,0.3);color:var(--text3);border:1px solid var(--border);box-shadow:none;}
+
+.rank-silver{
+  background:linear-gradient(135deg,#8c8c8c,#d4d4d4,#f0f0f0,#c8c8c8);
+  color:#1a1a1a;border:1px solid rgba(255,255,255,0.4);
+  box-shadow:0 2px 15px rgba(192,192,192,0.5);
+  text-shadow:0 1px 2px rgba(255,255,255,0.6);
+}
+
+.rank-gold{
+  background:linear-gradient(135deg,#b8860b,#ffd700,#fffacd,#daa520);
+  color:#1a0a00;border:1px solid rgba(255,255,255,0.5);
+  box-shadow:0 2px 18px rgba(255,215,0,0.7);
+  text-shadow:0 1px 3px rgba(255,200,0,0.5);
+  animation:goldBadgePulse 3s ease-in-out infinite;
+}
+@keyframes goldBadgePulse{0%,100%{box-shadow:0 2px 15px rgba(255,215,0,0.6);}50%{box-shadow:0 2px 25px rgba(255,215,0,1),0 0 40px rgba(255,200,0,0.4);}}
+
+.rank-platinum{
+  background:linear-gradient(135deg,#6c7a89,#bdc3c7,#ecf0f1,#bdc3c7,#6c7a89);
+  color:#1a1a2e;border:1px solid rgba(255,255,255,0.6);
+  box-shadow:0 2px 20px rgba(220,220,220,0.7);
+  text-shadow:0 1px 2px rgba(255,255,255,0.5);
+}
+
+.rank-diamond{
+  background:linear-gradient(135deg,#006994,#00b4ff,#7fffff,#00d4ff,#0080cc);
+  color:#001a2e;border:1px solid rgba(0,255,255,0.5);
+  box-shadow:0 2px 22px rgba(0,212,255,0.8);
+  text-shadow:0 1px 3px rgba(0,255,255,0.4);
+  animation:diamondBadge 2s ease-in-out infinite;
+}
+@keyframes diamondBadge{0%,100%{box-shadow:0 2px 18px rgba(0,212,255,0.7);}50%{box-shadow:0 2px 30px rgba(0,255,255,1),0 0 50px rgba(0,212,255,0.5);}}
+
+.rank-legendary{
+  background:linear-gradient(135deg,#ff0080,#ff6600,#ffd700,#00ff80,#00b4ff,#9900ff);
+  background-size:300% 300%;
+  color:#fff;border:1px solid rgba(255,255,255,0.4);
+  text-shadow:0 1px 6px rgba(0,0,0,0.5);
+  font-weight:900;letter-spacing:2px;
+  animation:legendaryBadge 3s linear infinite,legendaryGlow 2s ease-in-out infinite;
+}
+@keyframes legendaryBadge{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+@keyframes legendaryGlow{0%,100%{box-shadow:0 2px 20px rgba(255,0,128,0.7);}33%{box-shadow:0 2px 25px rgba(255,215,0,0.8);}66%{box-shadow:0 2px 25px rgba(0,180,255,0.8);}}
+/* PROFILE SECTION */
+.profile-card{display:flex;flex-direction:column;align-items:center;text-align:center;padding:32px;max-width:480px;margin:0 auto;}
+.profile-stats{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;}
+.stat-item{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;}
+.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;}
+.stat-value{font-size:18px;font-weight:700;color:var(--primary);margin-top:4px;}
+.theme-switcher{margin-top:24px;width:100%;}
+.theme-switcher h4{color:var(--text2);font-size:14px;margin-bottom:12px;}
+.theme-options{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.theme-opt{padding:6px 14px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:700;border:2px solid transparent;transition:var(--transition);}
+.theme-opt.dark{background:#0a0a1a;color:#00b4ff;border-color:#2a2a55;}
+.theme-opt.light{background:#f0f4ff;color:#1a1a3a;border-color:#c0ccee;}
+.color-opts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
+.color-opt{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:var(--transition);}
+.color-opt.active,.color-opt:hover{border-color:#fff;transform:scale(1.2);}
+.color-opt.blue{background:#00b4ff;}.color-opt.red{background:#ff3366;}.color-opt.green{background:#00cc66;}
+.color-opt.purple{background:#9966ff;}.color-opt.orange{background:#ff6600;}.color-opt.gold{background:#ffaa00;}
+/* WORKOUT */
+.workout-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:var(--transition);}
+.workout-card:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow);}
+.workout-img{width:100%;height:180px;object-fit:cover;}
+.workout-img-ph{width:100%;height:180px;background:linear-gradient(135deg,var(--card2),var(--bg3));display:flex;align-items:center;justify-content:center;font-size:48px;}
+.workout-body{padding:16px;}
+.workout-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:10px;}
+.badge-beginner{background:rgba(0,204,102,0.2);color:var(--success);}
+.badge-intermediate{background:rgba(255,170,0,0.2);color:var(--warning);}
+.badge-advanced{background:rgba(255,51,85,0.2);color:var(--danger);}
+.badge-common{background:rgba(0,180,255,0.2);color:var(--primary);}
+.workout-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.workout-muscles{font-size:12px;color:var(--text2);margin-bottom:10px;}
+.workout-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px;}
+.workout-howto{background:var(--card2);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px;}
+.workout-howto h4{font-size:13px;font-weight:700;color:var(--primary);margin-bottom:8px;}
+.workout-howto ol{padding-left:18px;}
+.workout-howto li{font-size:12px;color:var(--text2);margin-bottom:4px;line-height:1.5;}
+.workout-sets{font-size:13px;color:var(--accent);font-weight:700;}
+.workout-disclaimer{font-size:11px;color:var(--text3);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-style:italic;}
+/* DIET */
+.diet-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;padding:20px;}
+.diet-type-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:10px;}
+.diet-veg{background:rgba(0,204,102,0.2);color:var(--success);}
+.diet-nonveg{background:rgba(255,102,0,0.2);color:#ff6600;}
+.diet-gain{background:rgba(0,180,255,0.2);color:var(--primary);}
+.diet-loss{background:rgba(153,102,255,0.2);color:#9966ff;}
+.meal-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px;}
+.meal-table th{background:var(--card2);color:var(--primary);padding:8px;text-align:left;font-size:12px;}
+.meal-table td{padding:8px;border-bottom:1px solid var(--border);color:var(--text);}
+.meal-table tr:last-child td{border-bottom:none;}
+.protein-calc{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--primary);border-radius:var(--radius);padding:24px;margin-bottom:24px;}
+.protein-calc h3{color:var(--primary);font-size:16px;font-weight:700;margin-bottom:16px;}
+.calc-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+.calc-input{flex:1;min-width:120px;background:var(--card);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:var(--radius-sm);font-size:14px;font-family:var(--font-body);}
+.calc-input:focus{outline:none;border-color:var(--primary);}
+.calc-btn{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none;padding:10px 24px;border-radius:var(--radius-sm);cursor:pointer;font-weight:700;font-family:var(--font-body);}
+.calc-result{background:var(--bg3);border-radius:var(--radius-sm);padding:16px;margin-top:12px;display:none;}
+.calc-result.show{display:block;}
+.calc-result h4{color:var(--primary);margin-bottom:8px;}
+.calc-result p{color:var(--text);font-size:14px;line-height:1.8;}
+/* RULES */
+.rules-img{width:100%;max-width:400px;border-radius:var(--radius);margin:0 auto 24px;display:block;border:2px solid var(--border);}
+.rule-item{display:flex;gap:14px;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;transition:var(--transition);align-items:flex-start;}
+.rule-item:hover{border-color:var(--primary);}
+.rule-item.rule-special{border-color:var(--danger);}
+.rule-num{background:var(--primary);color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0;margin-top:2px;}
+.rule-special .rule-num{background:var(--danger);}
+.rule-icon{font-size:22px;flex-shrink:0;}
+.rule-text{color:var(--text);font-size:14px;line-height:1.6;}
+/* STORE */
+.store-card{
+  background:linear-gradient(145deg,var(--card),var(--card2));
+  border:1px solid var(--border2);border-radius:18px;
+  overflow:hidden;position:relative;transition:all 0.3s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;
+  box-shadow:0 4px 20px rgba(0,0,0,0.3);
+}
+.store-card:hover{
+  transform:translateY(-6px) scale(1.01);
+  border-color:var(--primary);
+  box-shadow:0 12px 40px rgba(0,180,255,0.25),0 0 0 1px var(--primary);
+}
+.store-card:hover .store-img{transform:scale(1.05);}
+.store-img-ph{
+  width:100%;height:180px;
+  background:linear-gradient(135deg,var(--bg3),var(--card2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:56px;border-bottom:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.store-img{
+  width:100%;height:180px;object-fit:cover;
+  border-bottom:1px solid var(--border);
+  transition:transform 0.4s ease;
+}
+.store-body{padding:16px;}
+.store-cat-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:8px;background:rgba(0,180,255,0.15);color:var(--primary);}
+.store-name{font-size:15px;font-weight:700;margin-bottom:8px;}
+.store-desc{font-size:13px;color:var(--text2);margin-bottom:10px;line-height:1.5;}
+.store-usage{font-size:12px;color:var(--text3);background:var(--card2);padding:8px;border-radius:6px;margin-bottom:10px;}
+.store-dosage{font-size:13px;color:var(--accent);font-weight:700;}
+.fav-btn{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:var(--transition);}
+.fav-btn:hover{transform:scale(1.2);}
+.fav-btn.active{background:rgba(255,50,50,0.8);}
+/* FEE */
+.fee-table{width:100%;border-collapse:collapse;margin-bottom:24px;}
+.fee-table th,.fee-table td{padding:14px 20px;text-align:center;}
+.fee-table th{background:var(--primary);color:#fff;font-weight:700;font-size:15px;}
+.fee-table tr:nth-child(even){background:var(--card2);}
+.fee-table tr:nth-child(odd){background:var(--card);}
+.fee-table td{font-size:16px;border-bottom:1px solid var(--border);}
+.fee-amount{font-size:22px;font-weight:900;color:var(--primary);}
+.payment-notice{background:linear-gradient(135deg,rgba(255,170,0,0.1),rgba(255,102,0,0.05));border:1px solid var(--warning);border-radius:var(--radius);padding:16px;margin-bottom:20px;}
+.payment-notice p{color:var(--text);font-size:14px;line-height:1.7;}
+.contact-btn{display:inline-flex;align-items:center;gap:8px;background:var(--success);color:#fff;padding:12px 24px;border-radius:var(--radius);text-decoration:none;font-weight:700;font-size:15px;transition:var(--transition);}
+.contact-btn:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,204,102,0.4);}
+/* NOTICE */
+.notice-timing{background:linear-gradient(135deg,rgba(0,180,255,0.1),rgba(0,0,0,0));border:1px solid var(--primary);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;}
+.notice-timing h3{color:var(--primary);font-size:15px;margin-bottom:8px;}
+.notice-timing p{color:var(--text);font-size:14px;white-space:pre-line;line-height:1.8;}
+.notice-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;transition:var(--transition);}
+.notice-card.important{border-color:var(--warning);}
+.notice-card:hover{border-color:var(--border2);}
+.notice-date{font-size:11px;color:var(--text3);margin-bottom:8px;}
+.notice-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.notice-content{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:16px;}
+.notice-reactions{display:flex;gap:8px;flex-wrap:wrap;}
+.reaction-btn{background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:13px;transition:var(--transition);display:flex;align-items:center;gap:4px;}
+.reaction-btn:hover{background:rgba(0,180,255,0.1);border-color:var(--primary);}
+.reaction-btn.user-reacted{background:rgba(0,180,255,0.2);border-color:var(--primary);color:var(--primary);}
+.reaction-count{font-size:11px;font-weight:700;color:var(--text2);}
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:32px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.7);}
+.modal h2{font-family:var(--font-head);font-size:22px;color:var(--primary);margin-bottom:6px;}
+.modal-sub{color:var(--text2);font-size:13px;margin-bottom:24px;}
+.modal-close{position:absolute;top:16px;right:16px;background:transparent;border:none;color:var(--text3);font-size:22px;cursor:pointer;transition:var(--transition);width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;}
+.modal-close:hover{background:var(--card2);color:var(--text);}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:13px;color:var(--text2);margin-bottom:6px;font-weight:600;}
+.form-control{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:var(--radius-sm);font-size:14px;font-family:var(--font-body);transition:var(--transition);}
+.form-control:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,180,255,0.1);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.btn-primary{width:100%;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none;padding:13px;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font-body);transition:var(--transition);margin-bottom:12px;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:var(--glow);}
+.btn-link{background:none;border:none;color:var(--primary);cursor:pointer;font-size:13px;font-family:var(--font-body);text-decoration:underline;}
+.btn-link:hover{color:#fff;}
+.modal-footer{text-align:center;margin-top:8px;font-size:13px;color:var(--text2);}
+.photo-upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:var(--transition);margin-bottom:4px;}
+.photo-upload-area:hover{border-color:var(--primary);}
+.photo-preview{width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 8px;display:none;}
+.photo-preview.show{display:block;}
+.otp-input{letter-spacing:8px;font-size:24px;text-align:center;font-weight:900;}
+.admin-link{display:inline-flex;align-items:center;gap:6px;background:rgba(255,170,0,0.1);border:1px solid var(--warning);color:var(--warning);padding:8px 16px;border-radius:var(--radius);text-decoration:none;font-size:13px;font-weight:700;transition:var(--transition);margin-top:8px;}
+.admin-link:hover{background:rgba(255,170,0,0.2);}
+::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg2);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}::-webkit-scrollbar-thumb:hover{background:var(--primary);}
+.loader-overlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:20px;transition:opacity 0.5s;}
+.loader-logo{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--primary);animation:logoPulse 1.5s ease infinite;}
+@keyframes logoPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,180,255,0.7);}70%{box-shadow:0 0 0 20px rgba(0,180,255,0);}}
+.loader-bar{width:200px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.loader-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));animation:load 2s ease-in-out;}
+@keyframes load{from{width:0;}to{width:100%;}}
+.loader-text{color:var(--primary);font-family:var(--font-head);font-size:12px;letter-spacing:2px;}
+.hidden{display:none!important;}
+.empty-state{text-align:center;padding:48px 20px;color:var(--text3);}
+.empty-icon{font-size:48px;display:block;margin-bottom:16px;}
+@keyframes slideUp{from{transform:translateX(-50%) translateY(20px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+@media(max-width:600px){.fee-img-section{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}.card-grid{grid-template-columns:1fr;}.profile-stats{grid-template-columns:1fr 1fr;}}
+
+/* ===== WIDGET BOXES ===== */
+.widget-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.widget-box{border-radius:20px;padding:20px;background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--border2);box-shadow:0 4px 24px rgba(0,180,255,0.12);position:relative;overflow:hidden;}
+.widget-box::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(0,180,255,0.08),transparent 70%);pointer-events:none;}
+.widget-title{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+.live-clock{font-family:var(--font-head);font-size:clamp(22px,5vw,36px);font-weight:900;color:var(--text);letter-spacing:3px;text-align:center;line-height:1;margin-bottom:4px;background:linear-gradient(135deg,#fff,var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.live-date{font-size:11px;color:var(--text3);text-align:center;margin-bottom:12px;letter-spacing:1px;}
+.stopwatch-display{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--primary);text-align:center;background:var(--bg3);border-radius:10px;padding:8px 12px;margin-bottom:8px;letter-spacing:2px;border:1px solid var(--border);}
+.sw-btns{display:flex;gap:6px;justify-content:center;margin-bottom:14px;}
+.sw-btn{padding:6px 14px;border-radius:20px;border:none;cursor:pointer;font-size:12px;font-weight:700;font-family:var(--font-body);transition:all 0.2s;}
+.sw-start{background:var(--success);color:#fff;}.sw-stop{background:var(--danger);color:#fff;}.sw-reset{background:var(--border2);color:var(--text);}
+.sw-btn:hover{transform:scale(1.06);}
+.tap-counter-section{border-top:1px solid var(--border);padding-top:12px;}
+.tap-counter-label{font-size:11px;color:var(--text3);text-align:center;margin-bottom:6px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.tap-display{font-family:var(--font-head);font-size:40px;font-weight:900;color:var(--accent);text-align:center;line-height:1;margin-bottom:8px;transition:transform 0.12s;}
+.tap-btns{display:flex;gap:12px;justify-content:center;align-items:center;}
+.tap-main-btn{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none;border-radius:50%;width:54px;height:54px;font-size:30px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,180,255,0.4);}
+.tap-main-btn:active{transform:scale(0.88);box-shadow:0 1px 6px rgba(0,180,255,0.2);}
+.tap-reset-btn{background:var(--border2);color:var(--text2);border:none;border-radius:50%;width:36px;height:36px;font-size:16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
+.tap-reset-btn:hover{background:var(--danger);color:#fff;}
+.day-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:8px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;letter-spacing:1px;}
+.muscle-tag{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--text2);background:var(--bg3);padding:3px 10px;border-radius:10px;margin-bottom:12px;border:1px solid var(--border);}
+.exercise-checklist{list-style:none;padding:0;max-height:190px;overflow-y:auto;scrollbar-width:thin;}
+.exercise-checklist li{display:flex;align-items:center;gap:10px;padding:7px 4px;border-bottom:1px solid var(--border);cursor:pointer;transition:all 0.2s;border-radius:6px;}
+.exercise-checklist li:last-child{border-bottom:none;}
+.exercise-checklist li:hover{background:rgba(0,180,255,0.07);padding-left:8px;}
+.exercise-checklist li.done .ex-name{text-decoration:line-through;color:var(--text3);}
+.ex-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;font-size:11px;font-weight:900;color:transparent;}
+.exercise-checklist li.done .ex-check{background:var(--success);border-color:var(--success);color:#fff;}
+.ex-name{font-size:13px;color:var(--text);font-weight:500;}
+.workout-progress{margin-top:10px;background:var(--border);border-radius:4px;height:5px;overflow:hidden;}
+.workout-progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--success));border-radius:4px;transition:width 0.4s ease;}
+.workout-progress-txt{font-size:11px;color:var(--text3);margin-top:4px;display:flex;justify-content:space-between;}
+.rest-day{text-align:center;padding:16px 0;}
+.rest-icon{font-size:40px;display:block;margin-bottom:8px;}
+/* Quick Color Customizer */
+.color-quick-panel{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--border2);border-radius:20px;padding:16px 20px;margin-bottom:20px;}
+.color-panel-title{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;}
+.color-panel-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.theme-toggle-grp{display:flex;gap:6px;}
+.theme-pill{padding:5px 14px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:700;border:2px solid var(--border);transition:all 0.2s;background:var(--bg2);color:var(--text2);font-family:var(--font-body);}
+.theme-pill.active,.theme-pill:hover{border-color:var(--primary);color:var(--primary);background:rgba(0,180,255,0.1);}
+.qdots{display:flex;gap:8px;flex-wrap:wrap;}
+.qdot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.2s;}
+.qdot:hover,.qdot.qactive{border-color:#fff;transform:scale(1.28);box-shadow:0 0 10px rgba(255,255,255,0.25);}
+.qdot.blue{background:#00b4ff;}.qdot.red{background:#ff3366;}.qdot.green{background:#00cc66;}
+.qdot.purple{background:#9966ff;}.qdot.orange{background:#ff6600;}.qdot.gold{background:#ffaa00;}
+@media(max-width:560px){.widget-row{grid-template-columns:1fr;}.live-clock{font-size:28px;}.exercise-checklist{max-height:150px;}.color-panel-row{flex-direction:column;align-items:flex-start;}}
+
+
+/* Password show/hide */
+.pass-wrapper{position:relative;}
+.pass-wrapper .form-control{padding-right:44px;}
+.pass-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px;transition:color 0.2s;line-height:1;}
+.pass-eye:hover{color:var(--primary);}
+
+
+/* ===== GYM COMPANION SECTIONS ===== */
+.gc-section{padding:16px 20px;}
+.gc-clock-section{background:linear-gradient(180deg,rgba(0,180,255,0.06),transparent);padding-top:18px;}
+.gc-label{font-size:10px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.gc-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);margin:0;}
+
+</style>
+</head>
+<body>
+<div class="loader-overlay" id="loader">
+  <img src="Icon.jpg" alt="Logo" class="loader-logo">
+  <div class="loader-text">POWER HEALTH CLUB</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+<canvas id="canvas-bg"></canvas>
+<div id="bg-overlay"></div>
+<div id="app">
+  <header>
+    <div class="header-inner">
+      <div class="header-left">
+        <img src="Icon.jpg" alt="Power Health Club Logo" class="gym-logo">
+        <div class="gym-info">
+          <h1>POWER HEALTH CLUB</h1>
+          <a href="https://maps.app.goo.gl/hMuxQhWkqAvqhLvN9" target="_blank" class="location-link">
+            <span class="loc-icon">📍</span> Sahatwar, Ballia
+          </a>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" id="notif-btn" title="Notifications">
+          🔔<span class="notif-badge hidden" id="notif-count">0</span>
+        </button>
+        <div id="auth-area">
+          <button class="auth-btn" onclick="openModal('login')">Login / Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <nav>
+    <div class="nav-inner">
+      <button class="nav-btn active" onclick="showSection('home')" id="nav-home">🏠 Home</button>
+      <button class="nav-btn" onclick="showSection('workout')" id="nav-workout">💪 Workout</button>
+      <button class="nav-btn" onclick="showSection('diet')" id="nav-diet">🥗 Diet</button>
+      <button class="nav-btn" onclick="showSection('rules')" id="nav-rules">📋 Rules</button>
+      <button class="nav-btn" onclick="showSection('store')" id="nav-store">🛍️ Store</button>
+      <button class="nav-btn" onclick="showSection('fee')" id="nav-fee">💰 Fee</button>
+      <button class="nav-btn" onclick="showSection('notice')" id="nav-notice">📢 Notice</button>
+      <button class="nav-btn" onclick="showSection('profile')" id="nav-profile">👤 Profile</button>
+    </div>
+  </nav>
+  <div class="notif-panel" id="notif-panel">
+    <div class="notif-header">
+      <h3>🔔 Notifications</h3>
+      <button class="btn-link" onclick="markAllRead()">Mark all read</button>
+    </div>
+    <div id="notif-list"></div>
+  </div>
+  <main>
+    <!-- HOME -->
+    <section id="sec-home" class="active">
+      <div class="hero">
+        <img src="Icon.jpg" alt="Logo" class="hero-logo">
+        <h2>POWER HEALTH CLUB</h2>
+        <p style="color:var(--text2);margin-bottom:4px;">Sahatwar, Ballia, Uttar Pradesh</p>
+        <div class="tagline">&#128170; NO PAIN NO GAIN &#128170;</div>
+        <p style="margin-top:12px;color:var(--text2);font-size:14px;">Fit Body &bull; Strong Mind &bull; Better Life</p>
+      </div>
+      <div class="timing-banner">
+        <span class="timing-icon">&#9200;</span>
+        <div class="timing-info">
+          <h3>Gym Timing / जिम टाइमिंग</h3>
+          <p id="timing-text">Monday - Saturday: 5:00 AM - 10:00 AM | 4:00 PM - 10:00 PM
+Sunday: 6:00 AM - 9:00 AM</p>
+        </div>
+      </div>
+      
+      <!-- ===== QUICK COLOR CUSTOMIZE ===== -->
+      <div class="color-quick-panel">
+        <div class="color-panel-title">&#127912; App Theme Customize / थीम बदलें</div>
+        <div class="color-panel-row">
+          <div class="theme-toggle-grp">
+            <button class="theme-pill" id="qtheme-dark"  onclick="qSetTheme('dark')">&#127769; Dark</button>
+            <button class="theme-pill" id="qtheme-light" onclick="qSetTheme('light')">&#9728;&#65039; Light</button>
+          </div>
+          <div class="qdots">
+            <div class="qdot blue"   onclick="qSetAccent('blue')"   title="Blue"></div>
+            <div class="qdot red"    onclick="qSetAccent('red')"    title="Red"></div>
+            <div class="qdot green"  onclick="qSetAccent('green')"  title="Green"></div>
+            <div class="qdot purple" onclick="qSetAccent('purple')" title="Purple"></div>
+            <div class="qdot orange" onclick="qSetAccent('orange')" title="Orange"></div>
+            <div class="qdot gold"   onclick="qSetAccent('gold')"   title="Gold"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 1:1 WIDGET ROW ===== -->
+      <div class="widget-row">
+
+        <!-- BOX 1: Gym Companion - Clock / Stopwatch / Counter -->
+        <div class="widget-box" style="padding:0;overflow:hidden;">
+
+          <!-- SECTION: Live Clock -->
+          <div class="gc-section gc-clock-section">
+            <div class="gc-label">&#128336; Live Time</div>
+            <div class="live-clock" id="w-clock">--:--:--</div>
+            <div class="live-date"  id="w-date">Loading...</div>
+          </div>
+
+          <!-- DIVIDER -->
+          <div class="gc-divider"></div>
+
+          <!-- SECTION: Stopwatch -->
+          <div class="gc-section">
+            <div class="gc-label">&#9201; Stopwatch</div>
+            <div class="stopwatch-display" id="sw-display">00:00:00</div>
+            <div class="sw-btns">
+              <button class="sw-btn sw-start" id="sw-start-btn" onclick="swToggle()">&#9654; Start</button>
+              <button class="sw-btn sw-reset" onclick="swReset()">&#8635; Reset</button>
+            </div>
+          </div>
+
+          <!-- DIVIDER -->
+          <div class="gc-divider"></div>
+
+          <!-- SECTION: Rep / Tap Counter -->
+          <div class="gc-section" style="padding-bottom:18px;">
+            <div class="gc-label">&#128170; Rep Counter</div>
+            <div class="tap-display" id="tap-count">0</div>
+            <div class="tap-btns">
+              <button class="tap-reset-btn" onclick="tapReset()" title="Reset Counter">&#8635;</button>
+              <button class="tap-main-btn" onclick="tapAdd()">+</button>
+              <button class="tap-reset-btn" onclick="_tapN=Math.max(0,_tapN-1);localStorage.setItem('phc_tapcount',_tapN);document.getElementById('tap-count').textContent=_tapN;" title="Undo -1" style="background:rgba(255,100,0,0.2);color:var(--accent);">-1</button>
+            </div>
+            <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px;letter-spacing:1px;">TAP + TO COUNT REPS</div>
+          </div>
+
+        </div>
+
+        <!-- BOX 2: Today's Workout Plan -->
+        <div class="widget-box">
+          <div class="widget-title">&#128197; Aaj ka Workout Plan</div>
+          <div id="today-workout-box">
+            <p style="color:var(--text3);font-size:13px;">Loading...</p>
+          </div>
+        </div>
+
+      </div><!-- end .widget-row -->
+
+      <div class="card" style="margin-bottom:24px;">
+        <div class="section-title" style="font-size:18px;">&#128176; Membership Plans</div>
+        <table class="fee-table" style="font-size:14px;">
+          <thead><tr><th>Plan</th><th>Duration</th><th>Fee</th></tr></thead>
+          <tbody>
+            <tr><td>&#129352; Basic</td><td>1 Month</td><td class="fee-amount">&#8377;500</td></tr>
+            <tr><td>&#129351; Standard</td><td>3 Months</td><td class="fee-amount">&#8377;1,500</td></tr>
+            <tr><td>&#128142; Premium</td><td>6 Months</td><td class="fee-amount">&#8377;2,400</td></tr>
+          </tbody>
+        </table>
+        <a class="contact-btn" style="margin-top:12px;display:inline-flex;" href="https://wa.me/919653071697" target="_blank">&#128172; WhatsApp: +91 9653071697</a>
+      </div>
+      <div class="social-section">
+        <h3>&#127760; Follow Us</h3>
+        <div class="social-links">
+          <a href="https://chat.whatsapp.com/BordoCoPoLABloh1C0sE7u" target="_blank" class="social-link">
+            <span class="s-icon">&#128172;</span><span class="s-name">WhatsApp</span>
+          </a>
+          <a href="https://youtube.com/@powarhealthclub?si=ki5-9Q_fYG1Gi2ki" target="_blank" class="social-link">
+            <span class="s-icon">&#9654;&#65039;</span><span class="s-name">YouTube</span>
+          </a>
+          <div class="social-link pending" id="sl-instagram"><span class="s-icon">&#128248;</span><span class="s-name">Instagram</span></div>
+          <div class="social-link pending" id="sl-telegram"><span class="s-icon">&#9992;&#65039;</span><span class="s-name">Telegram</span></div>
+          <div class="social-link pending" id="sl-twitter"><span class="s-icon">&#128038;</span><span class="s-name">Twitter/X</span></div>
+        </div>
+      </div>
+    </section>
+    <!-- WORKOUT -->
+    <section id="sec-workout">
+      <div class="section-title">&#128170; Workout Library</div>
+      <div class="section-sub">Complete workout guide for all fitness levels</div>
+      <div class="section-actions">
+        <div class="tab-group">
+          <button class="tab-btn active" onclick="filterWorkout('all',this)">&#127947; All</button>
+          <button class="tab-btn" onclick="filterWorkout('beginner',this)">&#127807; Beginner</button>
+          <button class="tab-btn" onclick="filterWorkout('intermediate',this)">&#9889; Intermediate</button>
+          <button class="tab-btn" onclick="filterWorkout('advanced',this)">&#128293; Advanced</button>
+          <button class="tab-btn" onclick="filterWorkout('common',this)">&#11088; Most Common</button>
+        </div>
+        <button class="translate-btn" onclick="toggleTranslate('workout')">
+          &#127760; <span id="workout-lang-label">&#2361;&#2367;&#2306;&#2342;&#2368; &#2350;&#2375;&#2306; &#2342;&#2375;&#2326;&#2375;&#2306;</span>
+        </button>
+      </div>
+      <div style="background:rgba(255,51,85,0.1);border:1px solid var(--danger);border-radius:var(--radius);padding:12px 16px;margin-bottom:20px;font-size:13px;color:#ff6688;">
+        &#9888;&#65039; <strong>Important:</strong> Always consult the gym trainer before attempting heavy weights. Power Health Club is not responsible for any injury caused without trainer permission.
+      </div>
+      <div class="card-grid" id="workout-grid"></div>
+    </section>
+    <!-- DIET -->
+    <section id="sec-diet">
+      <div class="section-title">&#129367; Diet &amp; Nutrition</div>
+      <img src="img_diet.jpg" alt="Healthy Diet" style="width:100%;max-height:200px;object-fit:cover;border-radius:var(--radius-lg);margin-bottom:16px;border:1px solid var(--border);" onerror="this.style.display='none'">
+      <div class="section-sub">Personalized diet plans for your fitness goals</div>
+      <div class="protein-calc">
+        <h3>&#129518; Protein Intake Calculator</h3>
+        <div class="calc-row">
+          <input type="number" class="calc-input" id="calc-weight" placeholder="Weight (kg)" min="30" max="200">
+          <input type="number" class="calc-input" id="calc-height" placeholder="Height (cm)" min="100" max="250">
+          <select class="calc-input" id="calc-goal">
+            <option value="maintain">Maintain Weight</option>
+            <option value="gain">Weight Gain</option>
+            <option value="loss">Weight Loss</option>
+          </select>
+        </div>
+        <button class="calc-btn" onclick="calcProtein()">Calculate &#128290;</button>
+        <div class="calc-result" id="calc-result"></div>
+      </div>
+      <div class="section-actions">
+        <div class="tab-group">
+          <button class="tab-btn active" onclick="filterDiet('all',this)">&#127829; All</button>
+          <button class="tab-btn" onclick="filterDiet('veg',this)">&#129382; Veg</button>
+          <button class="tab-btn" onclick="filterDiet('nonveg',this)">&#127831; Non-Veg</button>
+          <button class="tab-btn" onclick="filterDiet('gain',this)">&#128200; Weight Gain</button>
+          <button class="tab-btn" onclick="filterDiet('loss',this)">&#128201; Weight Loss</button>
+        </div>
+        <button class="translate-btn" onclick="toggleTranslate('diet')">
+          &#127760; <span id="diet-lang-label">&#2361;&#2367;&#2306;&#2342;&#2368; &#2350;&#2375;&#2306; &#2342;&#2375;&#2326;&#2375;&#2306;</span>
+        </button>
+      </div>
+      <div class="card-grid" id="diet-grid"></div>
+    </section>
+    <!-- RULES -->
+    <section id="sec-rules">
+      <div class="section-title">&#128203; Gym Rules &amp; Regulations</div>
+      <div class="section-sub">Please follow all rules for a safe and respectful environment</div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+        <button class="translate-btn" onclick="toggleTranslate('rules')">
+          &#127760; <span id="rules-lang-label">&#2361;&#2367;&#2306;&#2342;&#2368; &#2350;&#2375;&#2306; &#2342;&#2375;&#2326;&#2375;&#2306;</span>
+        </button>
+      </div>
+      <img src="img_rules.jpg" alt="Gym Rules" class="rules-img" onerror="this.style.display='none'">
+      <div id="rules-list"></div>
+    </section>
+    <!-- STORE -->
+    <section id="sec-store">
+      <div class="section-title">&#128717; Supplements &amp; Equipment</div>
+      <div class="section-sub">Quality products for your fitness journey</div>
+      <div class="section-actions">
+        <div class="tab-group">
+          <button class="tab-btn active" onclick="filterStore('all',this)">&#128730; All</button>
+          <button class="tab-btn" onclick="filterStore('protein',this)">&#128138; Protein</button>
+          <button class="tab-btn" onclick="filterStore('creatine',this)">&#9889; Creatine</button>
+          <button class="tab-btn" onclick="filterStore('vitamins',this)">&#127807; Vitamins</button>
+          <button class="tab-btn" onclick="filterStore('tools',this)">&#128296; Equipment</button>
+          <button class="tab-btn" onclick="filterStore('favorites',this)">&#10084;&#65039; Favorites</button>
+        </div>
+        <button class="translate-btn" onclick="toggleTranslate('store')">
+          &#127760; <span id="store-lang-label">&#2361;&#2367;&#2306;&#2342;&#2368; &#2350;&#2375;&#2306; &#2342;&#2375;&#2326;&#2375;&#2306;</span>
+        </button>
+      </div>
+      <div class="card-grid" id="store-grid"></div>
+    </section>
+    <!-- FEE -->
+    <section id="sec-fee">
+      <div class="section-title">&#128176; Fee &amp; Subscription</div>
+      <div class="section-sub">Transparent pricing for all membership plans</div>
+      <img src="Fee.png" alt="Fee Structure" style="width:100%;max-width:500px;display:block;margin:0 auto 24px;border-radius:var(--radius);border:2px solid var(--border);" onerror="this.style.display='none'">
+      <div class="card" style="margin-bottom:24px;">
+        <h3 style="color:var(--primary);margin-bottom:16px;font-size:18px;">&#128202; Membership Plans</h3>
+        <table class="fee-table">
+          <thead><tr><th>Plan</th><th>Duration</th><th>Fee</th><th>Savings</th></tr></thead>
+          <tbody>
+            <tr><td>&#129352; Basic</td><td><strong>1 Month</strong></td><td class="fee-amount">&#8377;500</td><td style="color:var(--text3);">&mdash;</td></tr>
+            <tr><td>&#129351; Standard</td><td><strong>3 Months</strong></td><td class="fee-amount">&#8377;1,500</td><td style="color:var(--success);">&#8377;0 saved</td></tr>
+            <tr><td>&#128142; Premium</td><td><strong>6 Months</strong></td><td class="fee-amount">&#8377;2,400</td><td style="color:var(--success);">Save &#8377;600</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="payment-notice">
+        <p>&#9888;&#65039; <strong>Important Notice:</strong> After making online payment, please call/WhatsApp Gym Owner <strong>Prakash Kumar</strong> to confirm your payment:</p>
+        <br><p>&#128242; <strong>+91 9653071697</strong> &mdash; Confirmation must!</p>
+        <p style="margin-top:8px;color:var(--text3);font-size:12px;">&#2911;&#2949;&#2928;&#2932;&#2940;&#2907;&#2970; &#2346;&#2375;&#2350;&#2947;&#2352;&#2942;&#2335; &#2325;&#2947; &#2348;&#2╗;&#2926; &#2319;&#2325; &#2348;&#2╗;&#2░; &#2332;&#2367;&#2350; &#2913;&#2928;&#2937;&#2░; &#2360;&#2947; call &#2325;&#2░;&#2325;&#2947; &#2332;&#2░;&#2969;&#2░; confirm &#2325;&#2░;&#2375;&#2306;&#2404;</p>
+      </div>
+      <div style="text-align:center;margin-bottom:24px;">
+        <h3 style="color:var(--primary);margin-bottom:16px;">&#128242; Online Payment</h3>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:16px;">Scan QR Code to pay via any UPI app</p>
+        <img src="QR.png.jpg" alt="Payment QR" style="max-width:280px;width:100%;border-radius:var(--radius);border:2px solid var(--border);display:block;margin:0 auto;" onerror="this.style.display='none'">
+        <p style="margin-top:12px;color:var(--text2);font-size:13px;">UPI ID: <strong style="color:var(--primary);">T965307169700@postbank</strong></p>
+        <p style="font-size:12px;color:var(--text3);margin-top:4px;">Prakash Kumar Rawat &mdash; India Post Payments Bank</p>
+      </div>
+      <div style="text-align:center;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;">
+        <a href="https://wa.me/919653071697" target="_blank" class="contact-btn">&#128172; WhatsApp</a>
+        <a href="tel:+919653071697" class="contact-btn" style="background:var(--primary);">&#128222; Call Now</a>
+      </div>
+      <div id="my-subscription" class="card" style="display:none;">
+        <h3 style="color:var(--primary);margin-bottom:12px;">&#127915; My Subscription</h3>
+        <div id="subscription-details"></div>
+      </div>
+    </section>
+    <!-- NOTICE BOARD -->
+    <section id="sec-notice">
+      <div class="section-title">&#128226; Notice Board</div>
+      <div class="section-sub">Important announcements from Power Health Club</div>
+      <div class="notice-timing">
+        <h3>&#9200; Gym Timing</h3>
+        <p id="notice-timing-text">Monday - Saturday: 5:00 AM - 10:00 AM | 4:00 PM - 10:00 PM
+Sunday: 6:00 AM - 9:00 AM</p>
+      </div>
+      <div id="notice-list"><div class="empty-state"><span class="empty-icon">&#128203;</span><p>No notices yet. Check back soon!</p></div></div>
+    </section>
+    <!-- PROFILE -->
+    <section id="sec-profile">
+      <div id="profile-content"></div>
+    </section>
+  </main>
+  <footer>
+    <div class="footer-inner">
+      <img src="Icon.jpg" alt="Logo" class="footer-logo" onerror="this.style.display='none'">
+      <div class="owner-label">Gym Owner</div>
+      <div class="owner-name">PRAKASH KUMAR</div>
+      <p style="font-size:13px;color:var(--text3);margin-top:4px;">Power Health Club, Sahatwar, Ballia</p>
+      <p style="margin-top:4px;"><a href="tel:+919653071697" style="color:var(--primary);text-decoration:none;">&#128222; +91 9653071697</a></p>
+      <hr class="footer-divider">
+      <div class="dev-credit">
+        Developed with &#10084;&#65039; by<br>
+        <span class="dev-name">&#10022; AYUSH KUMAR &#10022;</span>
+      </div>
+      <p style="margin-top:16px;font-size:11px;color:var(--text3);">&copy; 2024 Power Health Club | All Rights Reserved</p>
+      <a href="admin.html" class="admin-link" style="margin-top:16px;">&#9881;&#65039; Admin Panel</a>
+    </div>
+  </footer>
+<!-- Hidden Admin Button — visible only if user knows secret -->
+<div id="admin-quick-btn" style="position:fixed;bottom:80px;right:16px;z-index:999;display:none;">
+  <button onclick="openAdminPanel()" style="background:linear-gradient(135deg,#ff6600,#cc4400);color:#fff;border:none;border-radius:50%;width:46px;height:46px;font-size:20px;cursor:pointer;box-shadow:0 4px 16px rgba(255,102,0,0.5);" title="Admin Panel">&#128736;</button>
+</div>
+</div>
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal-login">
+    <button class="modal-close" onclick="closeModal()">&#10005;</button>
+    <h2>&#128274; Login</h2>
+    <p class="modal-sub">Welcome back to Power Health Club!</p>
+    <div class="form-group">
+      <label>Username / Mobile / Email</label>
+      <input type="text" class="form-control" id="login-id" placeholder="Enter username, mobile or email" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="pass-wrapper">
+        <input type="password" class="form-control" id="login-pass" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()">
+        <button class="pass-eye" type="button" onclick="togglePass('login-pass',this)" tabindex="-1">&#128065;</button>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Login &#10148;</button>
+    <div style="text-align:center;margin-bottom:12px;">
+      <button class="btn-link" onclick="openModal('forgot')">&#128273; Forgot Password?</button>
+    </div>
+    <div class="modal-footer">Don't have an account? <button class="btn-link" onclick="openModal('signup')">Sign Up</button></div>
+    <div id="login-err" style="color:var(--danger);font-size:13px;text-align:center;margin-top:8px;display:none;"></div>
+  </div>
+  <div class="modal hidden" id="modal-signup">
+    <button class="modal-close" onclick="closeModal()">&#10005;</button>
+    <h2>&#128221; Sign Up</h2>
+    <p class="modal-sub">Join Power Health Club today!</p>
+    <div style="text-align:center;margin-bottom:16px;">
+      <div class="photo-upload-area" onclick="document.getElementById('photo-input').click()">
+        <img id="photo-preview" class="photo-preview" src="" alt="Preview">
+        <p style="color:var(--text2);font-size:13px;">&#128247; Add Profile Photo (Optional)</p>
+        <p style="color:var(--text3);font-size:11px;">Click to upload</p>
+      </div>
+      <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="previewPhoto(event)">
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Full Name *</label><input type="text" class="form-control" id="su-name" placeholder="Your full name"></div>
+      <div class="form-group"><label>Username *</label><input type="text" class="form-control" id="su-username" placeholder="Choose username"></div>
+    </div>
+    <div class="form-group"><label>Mobile Number *</label><input type="tel" class="form-control" id="su-mobile" placeholder="+91 XXXXX XXXXX"></div>
+    <div class="form-group"><label>Email (Optional)</label><input type="email" class="form-control" id="su-email" placeholder="your@email.com"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Password *</label><div class="pass-wrapper"><input type="password" class="form-control" id="su-pass" placeholder="Create password"><button class="pass-eye" type="button" onclick="togglePass('su-pass',this)" tabindex="-1">&#128065;</button></div></div>
+      <div class="form-group"><label>Confirm Password *</label><div class="pass-wrapper"><input type="password" class="form-control" id="su-pass2" placeholder="Repeat password"><button class="pass-eye" type="button" onclick="togglePass('su-pass2',this)" tabindex="-1">&#128065;</button></div></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Height (cm)</label><input type="number" class="form-control" id="su-height" placeholder="e.g. 175"></div>
+      <div class="form-group"><label>Weight (kg)</label><input type="number" class="form-control" id="su-weight" placeholder="e.g. 70"></div>
+    </div>
+    <div class="form-group"><label>&#128197; Gym Joining Date</label><input type="date" class="form-control" id="su-gymdate"></div>
+    <div class="form-group">
+      <label>Membership Type</label>
+      <select class="form-control" id="su-membertype">
+        <option value="visitor">Visitor (Just browsing)</option>
+        <option value="member">Gym Member (Active subscription)</option>
+      </select>
+    </div>
+    <button class="btn-primary" onclick="doSignup()">Create Account &rarr;</button>
+    <div class="modal-footer">Already have an account? <button class="btn-link" onclick="openModal('login')">Login</button></div>
+    <div id="signup-err" style="color:var(--danger);font-size:13px;text-align:center;margin-top:8px;display:none;"></div>
+  </div>
+  <div class="modal hidden" id="modal-forgot">
+    <button class="modal-close" onclick="closeModal()">&#10005;</button>
+    <h2>&#128273; Forgot Password</h2>
+    <p class="modal-sub">We'll send an OTP to your mobile number</p>
+    <div id="forgot-step1">
+      <div class="form-group"><label>Mobile Number</label><input type="tel" class="form-control" id="forgot-mobile" placeholder="+91 XXXXX XXXXX"></div>
+      <button class="btn-primary" onclick="sendOTP()">Send OTP &rarr;</button>
+    </div>
+    <div id="forgot-step2" style="display:none;">
+      <div class="form-group"><label>Enter OTP</label><input type="text" class="form-control otp-input" id="otp-input" placeholder="------" maxlength="6"></div>
+      <div class="form-group"><label>New Password</label><div class="pass-wrapper"><input type="password" class="form-control" id="new-pass" placeholder="Enter new password"><button class="pass-eye" type="button" onclick="togglePass('new-pass',this)" tabindex="-1">&#128065;</button></div></div>
+      <button class="btn-primary" onclick="verifyOTP()">Reset Password &rarr;</button>
+      <div style="text-align:center;margin-top:8px;"><button class="btn-link" onclick="sendOTP()">Resend OTP</button></div>
+    </div>
+    <div id="forgot-err" style="color:var(--danger);font-size:13px;text-align:center;margin-top:8px;display:none;"></div>
+    <div id="forgot-success" style="color:var(--success);font-size:13px;text-align:center;margin-top:8px;display:none;"></div>
+    <div class="modal-footer"><button class="btn-link" onclick="openModal('login')">&larr; Back to Login</button></div>
+  </div>
+</div>
+<script>
+const DB={
+  get(k,d){try{return JSON.parse(localStorage.getItem('phc_'+k))||d;}catch{return d;}},
+  set(k,v){localStorage.setItem('phc_'+k,JSON.stringify(v));},
+  getUsers(){return this.get('users',[]);},saveUsers(u){this.set('users',u);},
+  getCurrentUser(){return this.get('current_user',null);},
+  setCurrentUser(u){this.set('current_user',u);},
+  logout(){localStorage.removeItem('phc_current_user');},
+  getWorkouts(){return this.get('workouts',DEFAULT_WORKOUTS);},saveWorkouts(d){this.set('workouts',d);},
+  getDiet(){return this.get('diet',DEFAULT_DIET);},saveDiet(d){this.set('diet',d);},
+  getRules(){return this.get('rules',DEFAULT_RULES);},saveRules(d){this.set('rules',d);},
+  getNotices(){return this.get('notices',[]);},saveNotices(d){this.set('notices',d);},
+  getSupplements(){return this.get('supplements',DEFAULT_SUPPLEMENTS);},saveSupplements(d){this.set('supplements',d);},
+  getSettings(){return this.get('settings',DEFAULT_SETTINGS);},saveSettings(d){this.set('settings',d);},
+  getNotifications(){return this.get('notifications',[]);},saveNotifications(d){this.set('notifications',d);},
+  getFees(){return this.get('fees',[]);},saveFees(d){this.set('fees',d);},
+};
+const DEFAULT_SETTINGS={gymTiming:'Monday - Saturday: 5:00 AM - 10:00 AM | 4:00 PM - 10:00 PM\nSunday: 6:00 AM - 9:00 AM',socialLinks:{whatsapp:'https://chat.whatsapp.com/BordoCoPoLABloh1C0sE7u',youtube:'https://youtube.com/@powarhealthclub?si=ki5-9Q_fYG1Gi2ki',instagram:'',telegram:'',twitter:''}};
+const DEFAULT_WORKOUTS=[
+  {id:'w1',name_en:'Push-Up',name_hi:'पुश-अप',category:'beginner',muscles:'Chest, Triceps, Shoulders',description_en:'A classic bodyweight exercise that builds chest, tricep and shoulder strength. Perfect for beginners and all fitness levels.',description_hi:'एक क्लासिक बॉडीवेट एक्सरसाइज जो छाती, ट्राइसेप्स और कंधों को मजबूत बनाती है। बिगिनर्स के लिए परफेक्ट।',howTo_en:['Get into plank position, hands shoulder-width apart','Keep body straight from head to heels','Lower chest toward the floor slowly','Push back up to starting position','Breathe in going down, out going up'],howTo_hi:['हाथों को कंधे की चौड़ाई पर रखकर प्लैंक पोजिशन में आएं','सिर से एड़ी तक शरीर बिल्कुल सीधा रखें','छाती को धीरे-धीरे फर्श की तरफ नीचे लाएं','वापस शुरुआती स्थिति में आएं','नीचे जाते समय सांस लें, ऊपर आते समय छोड़ें'],sets:'3 Sets × 15-20 Reps',image:'img_pushup.jpg'},
+  {id:'w2',name_en:'Barbell Bench Press',name_hi:'बारबेल बेंच प्रेस',category:'intermediate',muscles:'Chest, Triceps, Front Deltoids',description_en:'The king of chest exercises. Builds massive chest strength and muscle mass. Essential for upper body power.',description_hi:'छाती की सबसे प्रभावशाली एक्सरसाइज। छाती की ताकत और मांसपेशियां बनाती है। अपर बॉडी पावर के लिए जरूरी।',howTo_en:['Lie flat on bench, feet firmly on floor','Grip bar slightly wider than shoulder-width','Unrack bar, lower to chest slowly and controlled','Press bar back up explosively','Keep back slightly arched, chest up throughout'],howTo_hi:['बेंच पर सीधे लेटें, पैर मजबूती से फर्श पर','कंधों से थोड़ा चौड़ा ग्रिप से बार पकड़ें','बार को धीरे-धीरे और नियंत्रण से छाती पर लाएं','बार को तेजी से ऊपर धकेलें','पूरे समय छाती ऊपर, पीठ थोड़ी आर्च में रखें'],sets:'4 Sets × 8-12 Reps',image:'img_bench.jpg'},
+  {id:'w3',name_en:'Deadlift',name_hi:'डेडलिफ्ट',category:'advanced',muscles:'Lower Back, Hamstrings, Glutes, Traps, Core',description_en:'The ultimate full-body compound movement. Builds incredible overall strength. Master with light weight first.',description_hi:'अल्टीमेट फुल-बॉडी कम्पाउंड मूवमेंट। अद्भुत ताकत बनाता है। पहले हल्के वजन से सीखें।',howTo_en:['Stand feet hip-width apart, bar over mid-foot','Hinge at hips, grip bar shoulder-width, chest up','Back flat, core tight, take a deep breath','Drive through heels, extend hips and knees simultaneously','Stand tall, then lower with full control'],howTo_hi:['पैरों को कूल्हे की चौड़ाई पर रखें, बार पैर के बीच पर','कूल्हों पर झुकें, बार को कंधे की चौड़ाई से पकड़ें, छाती ऊपर','पीठ सीधी, कोर टाइट, गहरी सांस लें','एड़ियों से धकेलें, कूल्हे और घुटने एक साथ सीधे करें','सीधे खड़े हों, फिर नियंत्रण से नीचे लाएं'],sets:'3 Sets × 5-8 Reps',image:'img_squat.jpg'},
+  {id:'w4',name_en:'Squat',name_hi:'स्क्वाट',category:'beginner',muscles:'Quadriceps, Hamstrings, Glutes, Core',description_en:'The foundational lower body exercise. Essential for leg strength and overall fitness. Great for all fitness levels.',description_hi:'लोअर बॉडी की बुनियादी एक्सरसाइज। पैरों की ताकत के लिए जरूरी। सभी फिटनेस लेवल के लिए अच्छी।',howTo_en:['Stand with feet shoulder-width apart, toes slightly out','Keep chest up and core engaged throughout','Sit back and down as if sitting on a chair','Knees track over toes, dont cave inward','Drive through heels to return to standing'],howTo_hi:['पैरों को कंधे की चौड़ाई पर, पंजे थोड़े बाहर रखें','छाती ऊपर और कोर एंगेज रखें','जैसे कुर्सी पर बैठते हैं वैसे पीछे और नीचे जाएं','घुटने पंजों की दिशा में, अंदर न मुड़ने दें','एड़ियों से धकेलकर खड़े हों'],sets:'4 Sets × 12-15 Reps',image:'img_squat.jpg'},
+  {id:'w5',name_en:'Pull-Up',name_hi:'पुल-अप',category:'intermediate',muscles:'Lats, Biceps, Rear Deltoids, Core',description_en:'Best bodyweight exercise for building a wide V-shaped back. Improves grip strength significantly.',description_hi:'चौड़ी V-शेप पीठ बनाने की सबसे अच्छी बॉडीवेट एक्सरसाइज। ग्रिप स्ट्रेंथ काफी बढ़ाती है।',howTo_en:['Hang from bar with overhand grip, fully extended','Engage lats and pull chest up toward bar','Squeeze shoulder blades at the top','Lower slowly with full control, full dead hang','Avoid swinging or kipping unless practicing that skill'],howTo_hi:['ओवरहैंड ग्रिप से बार पर लटकें, पूरी तरह सीधे','लैट्स लगाएं और छाती को बार की तरफ खींचें','ऊपर शोल्डर ब्लेड दबाएं','नियंत्रण से धीरे नीचे आएं, पूरी तरह लटकें','झूलने से बचें'],sets:'3 Sets × Max Reps',image:'img_pullup.jpg'},
+  {id:'w6',name_en:'Dumbbell Curl',name_hi:'डम्बल कर्ल',category:'common',muscles:'Biceps, Forearms, Brachialis',description_en:'The most iconic arm exercise. Isolates and builds impressive bicep peak effectively.',description_hi:'सबसे आइकॉनिक आर्म एक्सरसाइज। बाइसेप्स को प्रभावी ढंग से बनाती है।',howTo_en:['Stand or sit holding dumbbells at your sides','Keep elbows pinned close to your torso','Curl weights while rotating palm upward (supinate)','Squeeze bicep hard at the top for 1 second','Lower slowly in 3 counts, full range of motion'],howTo_hi:['डम्बल पकड़कर खड़े हों या बैठें','कोहनियों को शरीर से सटाकर रखें','हथेली ऊपर करते हुए वजन उठाएं','ऊपर 1 सेकंड के लिए बाइसेप जोर से दबाएं','3 काउंट में धीरे नीचे लाएं, पूरी रेंज'],sets:'3 Sets × 12-15 Reps',image:'img_curl.jpg'},
+  {id:'w7',name_en:'Plank',name_hi:'प्लैंक',category:'beginner',muscles:'Core, Abs, Shoulders, Lower Back',description_en:'Best core stability exercise. Strengthens the entire midsection and improves posture.',description_hi:'सबसे अच्छी कोर स्टेबिलिटी एक्सरसाइज। पूरे मिडसेक्शन को मजबूत करती है।',howTo_en:['Get into forearm plank — elbows under shoulders','Body completely straight from head to heels','Engage core, squeeze glutes, keep hips level','Breathe normally, dont hold your breath','Start 30 seconds, progressively build to 2 minutes'],howTo_hi:['फोरआर्म प्लैंक में आएं — कोहनियां कंधों के नीचे','सिर से एड़ी तक शरीर बिल्कुल सीधा','कोर लगाएं, ग्लूट्स दबाएं, कूल्हे समान रखें','सामान्य सांस लें, सांस न रोकें','30 सेकंड से शुरू करें, 2 मिनट तक बढ़ाएं'],sets:'3 Sets × 30-60 seconds',image:'img_plank.jpg'},
+  {id:'w8',name_en:'Shoulder Press (Dumbbell)',name_hi:'शोल्डर प्रेस (डम्बल)',category:'common',muscles:'Deltoids, Triceps, Upper Traps',description_en:'Primary shoulder building exercise. Creates wide, capped shoulders for that athletic physique.',description_hi:'मुख्य शोल्डर बनाने वाली एक्सरसाइज। चौड़े, कैप्ड शोल्डर बनाती है।',howTo_en:['Sit or stand with dumbbells at shoulder height, palms forward','Core tight, back straight — avoid excessive arching','Press weights directly overhead until arms fully extended','Dont shrug shoulders at the top','Lower slowly back to shoulder level in 3 counts'],howTo_hi:['डम्बल को कंधे की ऊंचाई पर, हथेलियां आगे, बैठें या खड़े हों','कोर टाइट, पीठ सीधी — ज्यादा आर्च से बचें','वजन सीधे ऊपर धकेलें जब तक बाजू पूरी न हो','ऊपर कंधे न उठाएं','3 काउंट में धीरे कंधे के स्तर पर वापस लाएं'],sets:'4 Sets × 10-12 Reps',image:'img_shoulder.jpg'},
+];
+const DEFAULT_DIET=[
+  {id:'d1',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzBhMmUwYSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMxYTU1MDAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfpaY8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5WZWdldGFyaWFuIERpZXQ8L3RleHQ+CiAgPHJlY3QgeD0iODAiIHk9IjI0OCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjMpIi8+Cjwvc3ZnPg==',type:'veg',title_en:'Vegetarian Muscle Building Diet',title_hi:'शाकाहारी मांसपेशी निर्माण डाइट',description_en:'Complete vegetarian diet plan rich in protein for muscle building and strength.',description_hi:'मांसपेशियां बनाने के लिए प्रोटीन से भरपूर पूर्ण शाकाहारी डाइट योजना।',meals:[{time:'5:30 AM',food_en:'Banana + 2 glasses water + Black coffee (optional)',food_hi:'केला + 2 गिलास पानी + ब्लैक कॉफी (वैकल्पिक)',protein:'3g',calories:'120'},{time:'8:00 AM',food_en:'5 Egg whites + 2 Whole eggs + Oats (50g) + Milk 300ml',food_hi:'5 अंडे का सफेद + 2 पूरे अंडे + ओट्स (50g) + दूध 300ml',protein:'35g',calories:'450'},{time:'11:00 AM',food_en:'Greek Yogurt 200g + Mixed nuts 30g',food_hi:'ग्रीक योगर्ट 200g + मिक्स ड्राई फ्रूट्स 30g',protein:'20g',calories:'280'},{time:'1:00 PM',food_en:'Brown Rice 150g + Dal 1 bowl + Paneer 100g + Salad',food_hi:'ब्राउन राइस 150g + दाल 1 कटोरी + पनीर 100g + सलाद',protein:'40g',calories:'580'},{time:'4:00 PM',food_en:'Whey Protein shake + Banana',food_hi:'व्हे प्रोटीन शेक + केला',protein:'25g',calories:'300'},{time:'7:00 PM',food_en:'Chapati 3 + Rajma/Chhole + Mixed vegetables',food_hi:'चपाती 3 + राजमा/छोले + मिक्स सब्जियां',protein:'35g',calories:'520'},{time:'9:00 PM',food_en:'Milk 300ml + Almonds 10',food_hi:'दूध 300ml + बादाम 10',protein:'12g',calories:'220'}],tips_en:'Drink 3-4 liters water daily. Eat at same times each day for best results. Paneer and soy are your best protein sources.',tips_hi:'रोजाना 3-4 लीटर पानी पिएं। सर्वोत्तम परिणामों के लिए हर दिन एक ही समय पर खाएं। पनीर और सोया आपके सबसे अच्छे प्रोटीन स्रोत हैं।',image:null},
+  {id:'d2',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzJlMGEwYSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM1NTAwMDAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfjZc8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5Ob24tVmVnIEhpZ2ggUHJvdGVpbjwvdGV4dD4KICA8cmVjdCB4PSI4MCIgeT0iMjQ4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMykiLz4KPC9zdmc+',type:'nonveg',title_en:'Non-Vegetarian High Protein Diet',title_hi:'मांसाहारी हाई प्रोटीन डाइट',description_en:'High protein non-veg diet for maximum muscle growth and fast recovery.',description_hi:'अधिकतम मांसपेशी वृद्धि और तेज रिकवरी के लिए हाई प्रोटीन मांसाहारी डाइट।',meals:[{time:'6:00 AM',food_en:'4 Boiled eggs + Black coffee',food_hi:'4 उबले अंडे + ब्लैक कॉफी',protein:'25g',calories:'250'},{time:'8:00 AM',food_en:'Whey Protein + Oats 50g + Banana',food_hi:'व्हे प्रोटीन + ओट्स 50g + केला',protein:'35g',calories:'400'},{time:'12:00 PM',food_en:'Chicken Breast 200g + Brown Rice + Salad',food_hi:'चिकन ब्रेस्ट 200g + ब्राउन राइस + सलाद',protein:'50g',calories:'600'},{time:'4:00 PM',food_en:'Egg sandwich 2 + Milk 300ml',food_hi:'अंडा सैंडविच 2 + दूध 300ml',protein:'30g',calories:'380'},{time:'7:00 PM',food_en:'Fish 200g OR Chicken + Chapati 3 + Vegetables',food_hi:'मछली 200g या चिकन + चपाती 3 + सब्जियां',protein:'45g',calories:'550'},{time:'9:30 PM',food_en:'Paneer 100g + Almonds 10',food_hi:'पनीर 100g + बादाम 10',protein:'15g',calories:'200'}],tips_en:'Total daily protein 200g+. Stay hydrated. Avoid processed foods and junk. Sleep 8 hours for maximum muscle recovery.',tips_hi:'रोजाना कुल प्रोटीन 200g+। हाइड्रेटेड रहें। प्रोसेस्ड और जंक फूड से बचें। अधिकतम मांसपेशी रिकवरी के लिए 8 घंटे सोएं।',image:null},
+  {id:'d3',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzFhMGEyZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMzYTAwOTkiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfkqo8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5XZWlnaHQgR2FpbiBEaWV0PC90ZXh0PgogIDxyZWN0IHg9IjgwIiB5PSIyNDgiIHdpZHRoPSIyNDAiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4zKSIvPgo8L3N2Zz4=',type:'gain',title_en:'Weight Gain Diet Plan',title_hi:'वजन बढ़ाने की डाइट योजना',description_en:'Caloric surplus diet to pack on lean muscle mass and healthy weight. Eat big to get big!',description_hi:'लीन मसल मास और स्वस्थ वजन बढ़ाने के लिए कैलोरिक सरप्लस डाइट। बड़ा खाओ, बड़ा बनो!',meals:[{time:'7:00 AM',food_en:'5 eggs + 2 banana + Milk 500ml + Peanut butter toast',food_hi:'5 अंडे + 2 केला + दूध 500ml + पीनट बटर टोस्ट',protein:'55g',calories:'750'},{time:'10:00 AM',food_en:'Mass gainer shake OR Dry fruits + Milk + Banana',food_hi:'मास गेनर शेक या ड्राई फ्रूट्स + दूध + केला',protein:'30g',calories:'600'},{time:'1:00 PM',food_en:'Rice 2 cups + Chicken/Dal + Paneer + Salad',food_hi:'चावल 2 कप + चिकन/दाल + पनीर + सलाद',protein:'50g',calories:'700'},{time:'4:00 PM',food_en:'Sweet potato + Whey Protein shake',food_hi:'शकरकंद + व्हे प्रोटीन शेक',protein:'30g',calories:'400'},{time:'7:30 PM',food_en:'Chapati 4-5 + Chicken curry + Vegetables',food_hi:'चपाती 4-5 + चिकन करी + सब्जियां',protein:'55g',calories:'750'},{time:'Before Sleep',food_en:'Milk 300ml + Peanut butter 2 tbsp',food_hi:'दूध 300ml + पीनट बटर 2 चम्मच',protein:'15g',calories:'300'}],tips_en:'Eat 300-500 calories above maintenance. Train hard, sleep 8 hours, be consistent. Track your weight weekly.',tips_hi:'मेंटेनेंस से 300-500 कैलोरी अधिक खाएं। कड़ी मेहनत, 8 घंटे नींद, निरंतरता। हफ्तेवार वजन ट्रैक करें।',image:null},
+  {id:'d4',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzJlMWEwYSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM4ODMzMDAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCflKU8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5XZWlnaHQgTG9zcyBEaWV0PC90ZXh0PgogIDxyZWN0IHg9IjgwIiB5PSIyNDgiIHdpZHRoPSIyNDAiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4zKSIvPgo8L3N2Zz4=',type:'loss',title_en:'Weight Loss Diet Plan',title_hi:'वजन घटाने की डाइट योजना',description_en:'Caloric deficit diet to burn fat while preserving valuable muscle mass.',description_hi:'मांसपेशियां बचाते हुए चर्बी जलाने के लिए कैलोरिक डेफिसिट डाइट।',meals:[{time:'7:00 AM',food_en:'Green tea + 2 boiled eggs + 1 brown bread toast',food_hi:'ग्रीन टी + 2 उबले अंडे + 1 ब्राउन ब्रेड टोस्ट',protein:'18g',calories:'250'},{time:'10:00 AM',food_en:'Apple + 10 almonds + Water 500ml',food_hi:'सेब + 10 बादाम + पानी 500ml',protein:'5g',calories:'150'},{time:'1:00 PM',food_en:'Grilled chicken 150g + Salad + Dal half bowl',food_hi:'ग्रिल्ड चिकन 150g + सलाद + दाल आधी कटोरी',protein:'40g',calories:'350'},{time:'4:00 PM',food_en:'Greek yogurt 100g + Cucumber',food_hi:'ग्रीक योगर्ट 100g + खीरा',protein:'10g',calories:'100'},{time:'7:30 PM',food_en:'Dal 1 bowl + 2 Chapati + Mixed vegetables no oil',food_hi:'दाल 1 कटोरी + 2 चपाती + मिक्स सब्जियां बिना तेल',protein:'25g',calories:'380'}],tips_en:'Avoid sugar, refined carbs, and fried food completely. Do cardio 3-4x per week. Drink 4 liters water daily. Sleep well.',tips_hi:'शक्कर, रिफाइंड कार्ब्स और तले खाने से बिल्कुल बचें। हफ्ते में 3-4 बार कार्डियो करें। रोज 4 लीटर पानी पिएं।',image:null},
+];
+const DEFAULT_RULES=[
+  {id:'r1',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzFhMGEyZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMzYTAwNjAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfmqs8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5ObyBSdWRlIEJlaGF2aW9yPC90ZXh0PgogIDxyZWN0IHg9IjgwIiB5PSIyNDgiIHdpZHRoPSIyNDAiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4zKSIvPgo8L3N2Zz4=',category:'etiquette',icon:'🎵',order:1,text_en:'No loud music without earphones. Use headphones to enjoy music without disturbing fellow members.',text_hi:'इयरफोन के बिना तेज आवाज में संगीत न बजाएं। साथी सदस्यों को परेशान किए बिना संगीत सुनने के लिए हेडफोन का उपयोग करें।'},
+  {id:'r2',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzBhMWEyZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMwMDMzNjYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfkZU8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5Qcm9wZXIgRHJlc3MgQ29kZTwvdGV4dD4KICA8cmVjdCB4PSI4MCIgeT0iMjQ4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMykiLz4KPC9zdmc+',category:'etiquette',icon:'🤝',order:2,text_en:'No arguments or disputes inside the gym. Keep the atmosphere peaceful, positive and focused on fitness.',text_hi:'जिम के अंदर किसी भी प्रकार का झगड़ा या बहस न करें। माहौल शांतिपूर्ण, सकारात्मक और फिटनेस पर केंद्रित रखें।'},
+  {id:'r3',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzBhMmUxYSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMwMDY2MzMiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfp7k8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5LZWVwIENsZWFuPC90ZXh0PgogIDxyZWN0IHg9IjgwIiB5PSIyNDgiIHdpZHRoPSIyNDAiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4zKSIvPgo8L3N2Zz4=',category:'etiquette',icon:'🚫',order:3,text_en:'Absolutely NO abusive, offensive or vulgar language inside the gym premises at any time.',text_hi:'किसी भी समय जिम परिसर के अंदर किसी भी प्रकार की गाली-गलौज, अपमानजनक या अश्लील भाषा का उपयोग बिल्कुल न करें।'},
+  {id:'r4',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzJlMWEwYSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM2NjMzMDAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfk7U8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5ObyBNb2JpbGUgRHVyaW5nIFNldHM8L3RleHQ+CiAgPHJlY3QgeD0iODAiIHk9IjI0OCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjMpIi8+Cjwvc3ZnPg==',category:'etiquette',icon:'💪',order:4,text_en:'Help and motivate each other. This gym is a brotherhood — support your fellow members in their fitness journey.',text_hi:'एक दूसरे की मदद करें और प्रेरित करें। यह जिम एक भाईचारा है — अपने साथी सदस्यों की फिटनेस यात्रा में समर्थन करें।'},
+  {id:'r5',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzFhMmUwYSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMzMzY2MDAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfj4vvuI88L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5SZS1yYWNrIFdlaWdodHM8L3RleHQ+CiAgPHJlY3QgeD0iODAiIHk9IjI0OCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjMpIi8+Cjwvc3ZnPg==',category:'etiquette',icon:'🏋️',order:5,text_en:'Always re-rack weights and return equipment to its proper place after use. Keep the gym organized for everyone.',text_hi:'उपयोग के बाद हमेशा वजन वापस उनकी सही जगह पर रखें। सबके लिए जिम व्यवस्थित रखें।'},
+  {id:'r6',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzJlMGExYSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM2NjAwMzMiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfpKs8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5ObyBMb3VkIE5vaXNlPC90ZXh0PgogIDxyZWN0IHg9IjgwIiB5PSIyNDgiIHdpZHRoPSIyNDAiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4zKSIvPgo8L3N2Zz4=',category:'etiquette',icon:'🧹',order:6,text_en:'Maintain cleanliness. Wipe down machines, benches and equipment after use. Bring a towel.',text_hi:'सफाई बनाए रखें। उपयोग के बाद मशीनें, बेंच और उपकरण पोंछें। तौलिया लाएं।'},
+  {id:'r7',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzBhMmUyZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMwMDY2NjYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPuKPse+4jzwvdGV4dD4KICA8dGV4dCB4PSIyMDAiIHk9IjIzMCIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC45KSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiPlJlc3BlY3QgVGltZSBMaW1pdHM8L3RleHQ+CiAgPHJlY3QgeD0iODAiIHk9IjI0OCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjMpIi8+Cjwvc3ZnPg==',category:'etiquette',icon:'⏰',order:7,text_en:'Respect gym timing. Plan your workout to finish within gym hours. Late arrivals may not get full session.',text_hi:'जिम के समय का सम्मान करें। वर्कआउट जिम के घंटों में पूरी हो ऐसे प्लान करें।'},
+  {id:'r8',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzFhMGEwYSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM2NjAwMDAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfpJ08L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5SZXNwZWN0IEV2ZXJ5b25lPC90ZXh0PgogIDxyZWN0IHg9IjgwIiB5PSIyNDgiIHdpZHRoPSIyNDAiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4zKSIvPgo8L3N2Zz4=',category:'safety',icon:'⚠️',order:8,isSpecial:true,text_en:'SAFETY RULE: Do NOT attempt heavy weights without trainer permission or guidance. Any injury caused by self-initiated heavy workout without trainer authorization is SOLELY YOUR RESPONSIBILITY. Power Health Club will NOT be held liable.',text_hi:'सुरक्षा नियम: ट्रेनर की अनुमति या मार्गदर्शन के बिना भारी वजन उठाने की कोशिश न करें। ट्रेनर की अनुमति के बिना भारी वर्कआउट से होने वाली कोई भी चोट केवल आपकी जिम्मेदारी है। पावर हेल्थ क्लब जिम्मेदार नहीं होगा।'},
+  {id:'r9',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzBhMWEyZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMwMDQ0ODgiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfkqc8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5TdGF5IEh5ZHJhdGVkPC90ZXh0PgogIDxyZWN0IHg9IjgwIiB5PSIyNDgiIHdpZHRoPSIyNDAiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4zKSIvPgo8L3N2Zz4=',category:'safety',icon:'🔐',order:9,isSpecial:true,text_en:'Protect your valuables. Keep belongings safe and secure at all times. Power Health Club is NOT responsible for any lost, stolen or damaged personal items.',text_hi:'अपना कीमती सामान सुरक्षित रखें। सामान खोने, चोरी होने या क्षतिग्रस्त होने पर पावर हेल्थ क्लब जिम्मेदार नहीं होगा। विनम्रता से अपने सम्मान की सुरक्षा स्वयं करें।'},
+  {id:'r10',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzFhMmUyZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMwMDQ0NDQiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfp7Q8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5Vc2UgRGVvZG9yYW50PC90ZXh0PgogIDxyZWN0IHg9IjgwIiB5PSIyNDgiIHdpZHRoPSIyNDAiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4zKSIvPgo8L3N2Zz4=',category:'safety',icon:'🩺',order:10,text_en:'If you have any medical condition, injury or health issue, inform the trainer BEFORE starting your workout session.',text_hi:'यदि आपको कोई चिकित्सीय स्थिति, चोट या स्वास्थ्य समस्या है, तो वर्कआउट शुरू करने से पहले ट्रेनर को अवश्य बताएं।'},
+  {id:'r11',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzJlMWEyZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM0NDAwNjYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfjrU8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5ObyBMb3VkIE11c2ljPC90ZXh0PgogIDxyZWN0IHg9IjgwIiB5PSIyNDgiIHdpZHRoPSIyNDAiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4zKSIvPgo8L3N2Zz4=',category:'special',icon:'🙏',order:11,text_en:'This gym welcomes and respects people of ALL religions, castes, communities and backgrounds equally. Discrimination of any kind — based on religion, caste, region or language — is strictly PROHIBITED.',text_hi:'यह जिम सभी धर्मों, जातियों, समुदायों और पृष्ठभूमियों के लोगों का समान रूप से स्वागत और सम्मान करता है। धर्म, जाति, क्षेत्र या भाषा के आधार पर किसी भी प्रकार का भेदभाव सख्त वर्जित है।'},
+  {id:'r12',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzJlMmUwYSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM1NTU1MDAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCflJI8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5Mb2NrIExvY2tlcnM8L3RleHQ+CiAgPHJlY3QgeD0iODAiIHk9IjI0OCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjMpIi8+Cjwvc3ZnPg==',category:'special',icon:'🚭',order:12,text_en:'Smoking, alcohol, tobacco and any intoxicants are strictly prohibited inside and around the gym premises.',text_hi:'जिम परिसर के अंदर और आसपास धूम्रपान, शराब, तंबाकू और कोई भी नशीला पदार्थ सख्त वर्जित है।'},
+  {id:'r13',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzBhMmUwYSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMwMDU1MDAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfqbo8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5JbmZvcm0gb2YgSGVhbHRoIElzc3VlczwvdGV4dD4KICA8cmVjdCB4PSI4MCIgeT0iMjQ4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMykiLz4KPC9zdmc+',category:'etiquette',icon:'👕',order:13,text_en:'Wear appropriate gym attire — proper sportswear is required for safety, hygiene and respect for other members.',text_hi:'उचित जिम पोशाक पहनें — सुरक्षा, स्वच्छता और अन्य सदस्यों के सम्मान के लिए उचित स्पोर्ट्सवेयर जरूरी है।'},
+  {id:'r14',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzJlMGEyZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM1NTAwNTUiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfmY88L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5Gb2xsb3cgVHJhaW5lciBBZHZpY2U8L3RleHQ+CiAgPHJlY3QgeD0iODAiIHk9IjI0OCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjMpIi8+Cjwvc3ZnPg==',category:'etiquette',icon:'📱',order:14,text_en:'Keep phone calls brief inside the gym. Step outside for long calls. Never occupy equipment while talking on phone.',text_hi:'जिम में फोन कॉल संक्षिप्त रखें। लंबी कॉल के लिए बाहर जाएं। फोन पर बात करते समय उपकरण पर न बैठें।'},
+];
+const DEFAULT_SUPPLEMENTS=[
+  {id:'s1',image:'img_whey.jpg',name_en:'Whey Protein',name_hi:'व्हे प्रोटीन',category:'protein',description_en:'Fast-digesting protein ideal for post-workout recovery and muscle building. Contains all essential amino acids.',description_hi:'वर्कआउट के बाद रिकवरी और मांसपेशियां बनाने के लिए तेज पचने वाला प्रोटीन। सभी जरूरी अमीनो एसिड शामिल।',usage_en:'Take 1 scoop within 30 minutes after workout, mixed with water or milk.',usage_hi:'वर्कआउट के 30 मिनट के भीतर 1 स्कूप पानी या दूध के साथ लें।',dosage_en:'1-2 scoops per day (25-50g protein)',dosage_hi:'प्रति दिन 1-2 स्कूप (25-50g प्रोटीन)',price:0,image:null},
+  {id:'s2',image:'img_creatine.jpg',name_en:'Creatine Monohydrate',name_hi:'क्रिएटिन मोनोहाइड्रेट',category:'creatine',description_en:'Scientifically proven to increase strength, power, and muscle size. Most researched supplement in sports nutrition.',description_hi:'ताकत, पावर और मांसपेशियों का आकार बढ़ाने के लिए वैज्ञानिक रूप से सिद्ध। खेल पोषण में सबसे अधिक शोध किया गया।',usage_en:'Mix 5g in water or protein shake. Take consistently every day, with or without workout.',usage_hi:'पानी या प्रोटीन शेक में 5g मिलाएं। हर दिन नियमित रूप से लें, वर्कआउट के साथ या बिना।',dosage_en:'5g per day consistently (no cycling needed)',dosage_hi:'प्रतिदिन 5g नियमित रूप से (साइक्लिंग की जरूरत नहीं)',price:0,image:null},
+  {id:'s3',image:'img_multivit.jpg',name_en:'Multivitamin',name_hi:'मल्टीविटामिन',category:'vitamins',description_en:'Essential vitamins and minerals to fill nutritional gaps, support immune system and overall health.',description_hi:'पोषण संबंधी कमियों को पूरा करने, इम्यून सिस्टम और समग्र स्वास्थ्य को सहारा देने के लिए जरूरी विटामिन और खनिज।',usage_en:'Take 1 tablet daily with breakfast or largest meal of the day.',usage_hi:'नाश्ते या दिन के सबसे बड़े भोजन के साथ रोज 1 टैबलेट लें।',dosage_en:'1 tablet per day with food',dosage_hi:'भोजन के साथ प्रतिदिन 1 टैबलेट',price:0,image:null},
+  {id:'s4',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzFhMGEyZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM1NTAwYWEiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPuKaoTwvdGV4dD4KICA8dGV4dCB4PSIyMDAiIHk9IjIzMCIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC45KSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiPkJDQUEgQW1pbm8gQWNpZHM8L3RleHQ+CiAgPHJlY3QgeD0iODAiIHk9IjI0OCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjMpIi8+Cjwvc3ZnPg==',name_en:'BCAA (Branch Chain Amino Acids)',name_hi:'बीसीएए',category:'protein',description_en:'Reduces muscle soreness and fatigue. Supports muscle recovery and prevents muscle breakdown during intense training.',description_hi:'मांसपेशियों की दर्द और थकान कम करता है। तीव्र प्रशिक्षण के दौरान रिकवरी में मदद करता है।',usage_en:'Mix 1 scoop in water. Drink during or immediately after workout.',usage_hi:'पानी में 1 स्कूप मिलाएं। वर्कआउट के दौरान या तुरंत बाद पिएं।',dosage_en:'5-10g per day during training sessions',dosage_hi:'ट्रेनिंग सेशन के दौरान प्रति दिन 5-10g',price:0,image:null},
+  {id:'s5',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzBhMWEyZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMwMDMzODgiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfpYo8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5HeW0gR2xvdmVzPC90ZXh0PgogIDxyZWN0IHg9IjgwIiB5PSIyNDgiIHdpZHRoPSIyNDAiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4zKSIvPgo8L3N2Zz4=',name_en:'Gym Gloves',name_hi:'जिम ग्लव्स',category:'tools',description_en:'Protect your hands from calluses and blisters. Improves grip strength and control during heavy barbell and dumbbell exercises.',description_hi:'हाथों को छाले और कठोरपन से बचाएं। भारी बारबेल और डम्बल एक्सरसाइज के दौरान ग्रिप सुधारें।',usage_en:'Wear during barbell, dumbbell, pull-up and cable exercises. Wash after every session.',usage_hi:'बारबेल, डम्बल, पुल-अप और केबल एक्सरसाइज के दौरान पहनें। हर सेशन के बाद धोएं।',dosage_en:'Use during all heavy grip exercises',dosage_hi:'सभी भारी ग्रिप एक्सरसाइज के दौरान उपयोग करें',price:0,image:null},
+  {id:'s6',image:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzJlMGEwYSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM3NzAwMDAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJnbG93Ij4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iOCIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjEzMCIgcj0iNzAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGZpbHRlcj0idXJsKCNnbG93KSIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMTU1IiBmb250LXNpemU9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWx0ZXI9InVybCgjZ2xvdykiPvCfj4vvuI88L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuOSkiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIj5HeW0gQmVsdDwvdGV4dD4KICA8cmVjdCB4PSI4MCIgeT0iMjQ4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMykiLz4KPC9zdmc+',name_en:'Gym Belt (Lifting Belt)',name_hi:'जिम बेल्ट (लिफ्टिंग बेल्ट)',category:'tools',description_en:'Provides crucial lower back support during heavy compound lifts like squats, deadlifts, and overhead press.',description_hi:'स्क्वाट, डेडलिफ्ट और ओवरहेड प्रेस जैसी भारी लिफ्ट के दौरान पीठ के निचले हिस्से को महत्वपूर्ण सहारा देती है।',usage_en:'Wear only for sets above 80% of your 1RM. Do not use for every set — let your core develop naturally.',usage_hi:'केवल 1RM के 80% से अधिक सेट के लिए पहनें। हर सेट के लिए न पहनें — कोर को प्राकृतिक रूप से विकसित होने दें।',dosage_en:'Use for maximum effort sets only',dosage_hi:'केवल अधिकतम प्रयास वाले सेट के लिए उपयोग करें',price:0,image:null},
+];
+const STATE={lang:{workout:'en',diet:'en',rules:'en',store:'en'},workoutFilter:'all',dietFilter:'all',storeFilter:'all',currentOTP:null,otpMobile:null};
+function doLogin(){
+  const id=document.getElementById('login-id').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  if(!id||!pass){showErr('login-err','Please fill all fields. / सभी field भरें।');return;}
+  const users=DB.getUsers();
+  if(!users||users.length===0){showErr('login-err','No accounts found. Please Sign Up first. / पहले Sign Up करें।');return;}
+  const idLow=id.toLowerCase();
+  const user=users.find(u=>{
+    if(!u)return false;
+    const uname=(u.username||'').toLowerCase();
+    const umobile=(u.mobile||'').replace(/\D/g,'');
+    const uemail=(u.email||'').toLowerCase();
+    const idMobile=id.replace(/\D/g,'');
+    return uname===idLow||umobile===idMobile||uemail===idLow;
+  });
+  if(!user){showErr('login-err','Account not found. Check username/mobile. / Account नहीं मिला।');return;}
+  let passMatch=false;
+  try{passMatch=user.password===btoa(unescape(encodeURIComponent(pass)));}catch(e){}
+  if(!passMatch){try{passMatch=user.password===btoa(pass);}catch(e){}}
+  if(!passMatch){showErr('login-err','Wrong password. / Password गलत है।');return;}
+  DB.setCurrentUser(user);
+  closeModal();
+  updateAuthUI();
+  showSection('profile');
+  showToast('Welcome back, '+user.name+'! \uD83D\uDCAA');
+}
+function doSignup(){
+  const name=document.getElementById('su-name').value.trim();
+  const username=document.getElementById('su-username').value.trim().toLowerCase();
+  const mobile=document.getElementById('su-mobile').value.trim();
+  const email=document.getElementById('su-email').value.trim();
+  const pass=document.getElementById('su-pass').value;
+  const pass2=document.getElementById('su-pass2').value;
+  const height=document.getElementById('su-height').value;
+  const weight=document.getElementById('su-weight').value;
+  const gymDate=document.getElementById('su-gymdate').value;
+  const memberType=document.getElementById('su-membertype').value;
+  if(!name||!username||!mobile||!pass){showErr('signup-err','Please fill all required fields.');return;}
+  if(pass!==pass2){showErr('signup-err','Passwords do not match.');return;}
+  if(pass.length<6){showErr('signup-err','Password must be at least 6 characters.');return;}
+  const users=DB.getUsers();
+  if(users.find(u=>u.username===username)){showErr('signup-err','Username already taken.');return;}
+  if(users.find(u=>u.mobile&&u.mobile.replace(/\D/g,'')==mobile.replace(/\D/g,''))){showErr('signup-err','Mobile already registered.');return;}
+  const preview=document.getElementById('photo-preview');
+  const newUser={id:'u'+Date.now(),name,username,mobile:mobile.trim(),email,password:(()=>{try{return btoa(unescape(encodeURIComponent(pass)));}catch(e){return btoa(pass);}})(),height:parseInt(height)||0,weight:parseInt(weight)||0,profilePhoto:preview.classList.contains('show')&&preview.src?preview.src:null,gymJoinDate:gymDate||new Date().toISOString().split('T')[0],registeredAt:new Date().toISOString(),isMember:memberType==='member',membershipExpiry:null,theme:'dark',accentColor:'blue',favorites:[],createdAt:Date.now()};
+  users.push(newUser);DB.saveUsers(users);DB.setCurrentUser(newUser);closeModal();updateAuthUI();showSection('profile');showToast('Welcome to Power Health Club, '+name+'!');
+}
+function sendOTP(){
+  const mobile=document.getElementById('forgot-mobile').value.trim();
+  if(!mobile){showErr('forgot-err','Please enter mobile number.');return;}
+  const users=DB.getUsers();
+  const user=users.find(u=>u.mobile&&u.mobile.replace(/\D/g,'')==mobile.replace(/\D/g,''));
+  if(!user){showErr('forgot-err','No account found with this mobile number.');return;}
+  STATE.currentOTP=Math.floor(100000+Math.random()*900000).toString();
+  STATE.otpMobile=mobile;
+  document.getElementById('forgot-step1').style.display='none';
+  document.getElementById('forgot-step2').style.display='block';
+  document.getElementById('forgot-err').style.display='none';
+  document.getElementById('forgot-success').textContent='OTP sent! (Demo OTP: '+STATE.currentOTP+')';
+  document.getElementById('forgot-success').style.display='block';
+}
+function verifyOTP(){
+  const otp=document.getElementById('otp-input').value.trim();
+  const newPass=document.getElementById('new-pass').value;
+  if(otp!==STATE.currentOTP){showErr('forgot-err','Invalid OTP.');return;}
+  if(!newPass||newPass.length<6){showErr('forgot-err','Password must be at least 6 characters.');return;}
+  const users=DB.getUsers();
+  const idx=users.findIndex(u=>u.mobile&&u.mobile.replace(/\D/g,'')==STATE.otpMobile.replace(/\D/g,''));
+  if(idx>=0){users[idx].password=btoa(newPass);DB.saveUsers(users);}
+  document.getElementById('forgot-success').textContent='Password reset successfully!';
+  setTimeout(()=>{closeModal();openModal('login');},2000);
+}
+function previewPhoto(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{const p=document.getElementById('photo-preview');p.src=e.target.result;p.classList.add('show');};
+  reader.readAsDataURL(file);
+}
+function getRank(gymJoinDate){
+  if(!gymJoinDate)return{rank:'none',label:'Visitor',cls:''};
+  const months=Math.floor((Date.now()-new Date(gymJoinDate))/(1000*60*60*24*30));
+  if(months<6)return{rank:'none',label:'New Member',cls:''};
+  if(months<12)return{rank:'silver',label:'Silver Member',cls:'ring-silver'};
+  if(months<36)return{rank:'gold',label:'Gold Member',cls:'ring-gold'};
+  if(months<60)return{rank:'platinum',label:'Platinum Member',cls:'ring-platinum'};
+  if(months<120)return{rank:'diamond',label:'Diamond Member',cls:'ring-diamond'};
+  return{rank:'legendary',label:'Legendary Member',cls:'ring-legendary'};
+}
+function getMemberAvatar(user,size=100){
+  const rank=getRank(user.gymJoinDate);
+  const inner=user.profilePhoto?`<img src="${user.profilePhoto}" class="profile-img-circle" style="width:${size}px;height:${size}px;" alt="${user.name}">`:
+    `<div class="avatar-default" style="width:${size}px;height:${size}px;font-size:${size/3}px;">${user.name.charAt(0).toUpperCase()}</div>`;
+  const tick=user.isMember?`<div class="member-tick">&#10003;</div>`:'';
+  return`<div class="profile-ring-wrapper ${rank.cls}">${inner}${tick}</div>`;
+}
+function showSection(id){
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const sec=document.getElementById('sec-'+id);
+  const nav=document.getElementById('nav-'+id);
+  if(sec)sec.classList.add('active');
+  if(nav)nav.classList.add('active');
+  if(id==='profile')renderProfile();
+  if(id==='notice'){renderNotices();renderTodayWorkout();}
+  if(id==='store')renderStore();
+  if(id==='fee')loadMySubscription();
+  if(id==='workout')renderWorkouts();
+  if(id==='diet')renderDiet();
+  if(id==='rules')renderRules();
+  const np=document.getElementById('notif-panel');if(np)np.classList.remove('show');
+}
+function openModal(type){
+  document.getElementById('modal-overlay').classList.add('show');
+  document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden'));
+  document.getElementById('modal-'+type).classList.remove('hidden');
+  if(type==='signup'){const d=new Date();document.getElementById('su-gymdate').valueAsDate=d;}
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('show');}
+function showErr(id,msg){const el=document.getElementById(id);el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',4000);}
+function showToast(msg,type='success'){
+  const t=document.createElement('div');
+  t.style.cssText=`position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:${type==='success'?'var(--success)':'var(--danger)'};color:#fff;padding:12px 24px;border-radius:var(--radius);font-weight:700;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.4);font-family:var(--font-body);font-size:14px;animation:slideUp 0.3s ease;max-width:90vw;text-align:center;`;
+  t.textContent=msg;document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity 0.3s';setTimeout(()=>t.remove(),300);},3000);
+}
+function updateAuthUI(){
+  const user=DB.getCurrentUser();
+  const area=document.getElementById('auth-area');
+  if(user){
+    const rank=getRank(user.gymJoinDate);
+    const inner=user.profilePhoto?`<img src="${user.profilePhoto}" class="header-avatar" alt="${user.name}" style="border-color:${rank.rank==='none'?'var(--primary)':rank.rank==='silver'?'#c0c0c0':rank.rank==='gold'?'#ffd700':rank.rank==='platinum'?'#e5e4e2':rank.rank==='diamond'?'#00d4ff':'#ff00ff'};">`:
+      `<div class="header-avatar" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:16px;">${user.name.charAt(0)}</div>`;
+    area.innerHTML=`<div style="position:relative;cursor:pointer;" onclick="showSection('profile')">${inner}${user.isMember?`<div class="member-tick-sm">&#10003;</div>`:''}</div>`;
+  }else{
+    area.innerHTML=`<button class="auth-btn" onclick="openModal('login')">Login / Sign Up</button>`;
+  }
+}
+function renderProfile(){
+  const user=DB.getCurrentUser();
+  const cont=document.getElementById('profile-content');
+  if(!user){
+    cont.innerHTML=`<div class="empty-state"><span class="empty-icon">&#128100;</span><p>Please login to view your profile</p><button class="btn-primary" onclick="openModal('login')" style="width:auto;padding:12px 32px;margin-top:16px;">Login Now</button></div>`;
+    return;
+  }
+  const rank=getRank(user.gymJoinDate);
+  const gymMonths=user.gymJoinDate?Math.floor((Date.now()-new Date(user.gymJoinDate))/(1000*60*60*24*30)):0;
+  let subsStatus=user.isMember?`<div style="color:var(--success);font-weight:700;">&#10003; Active Gym Member</div>`:
+    `<div style="color:var(--text3);">Visitor (Not subscribed)</div>`;
+  if(user.membershipExpiry){
+    const daysLeft=Math.ceil((new Date(user.membershipExpiry)-Date.now())/(1000*60*60*24));
+    subsStatus=daysLeft<=0?`<div style="color:var(--danger);">&#10007; Subscription Expired</div>`:
+      `<div style="color:var(--success);">&#10003; Active &mdash; ${daysLeft} days left</div>`;
+  }
+  const rankBadgeColors={none:'rank-none',silver:'rank-silver',gold:'rank-gold',platinum:'rank-platinum',diamond:'rank-diamond',legendary:'rank-legendary'};
+  const rankEmoji={none:'',silver:'&#129352; ',gold:'&#129351; ',platinum:'&#128293; ',diamond:'&#128142; ',legendary:'&#127775; '};
+  cont.innerHTML=`<div class="card profile-card">
+    ${getMemberAvatar(user,100)}
+    <div style="margin-top:12px;"><h2 style="font-size:22px;font-weight:900;">${user.name}</h2><p style="color:var(--text3);font-size:13px;">@${user.username}</p></div>
+    <div class="rank-badge ${rankBadgeColors[rank.rank]}" style="margin-top:8px;">${rankEmoji[rank.rank]}${rank.label}</div>
+    <div style="margin-top:8px;">${subsStatus}</div>
+    <div class="profile-stats">
+      <div class="stat-item"><div class="stat-label">Height</div><div class="stat-value">${user.height||'&#8212;'} <small style="font-size:12px;color:var(--text3);">cm</small></div></div>
+      <div class="stat-item"><div class="stat-label">Weight</div><div class="stat-value">${user.weight||'&#8212;'} <small style="font-size:12px;color:var(--text3);">kg</small></div></div>
+      <div class="stat-item"><div class="stat-label">Gym Since</div><div class="stat-value" style="font-size:13px;">${user.gymJoinDate||'&#8212;'}</div></div>
+      <div class="stat-item"><div class="stat-label">Duration</div><div class="stat-value" style="font-size:13px;">${gymMonths>0?gymMonths+' months':'New'}</div></div>
+      <div class="stat-item"><div class="stat-label">Mobile</div><div class="stat-value" style="font-size:12px;">${user.mobile}</div></div>
+      <div class="stat-item"><div class="stat-label">Member ID</div><div class="stat-value" style="font-size:12px;">#${user.id.slice(-6).toUpperCase()}</div></div>
+    </div>
+    <div class="theme-switcher">
+      <h4>&#127912; Theme Settings</h4>
+      <div class="theme-options">
+        <button class="theme-opt dark" onclick="setTheme('dark')">&#127769; Dark</button>
+        <button class="theme-opt light" onclick="setTheme('light')">&#9728;&#65039; Light</button>
+      </div>
+      <div class="color-opts" style="margin-top:12px;">
+        <div class="color-opt blue ${(user.accentColor||'blue')==='blue'?'active':''}" onclick="setAccent('blue')" title="Blue"></div>
+        <div class="color-opt red ${user.accentColor==='red'?'active':''}" onclick="setAccent('red')" title="Red"></div>
+        <div class="color-opt green ${user.accentColor==='green'?'active':''}" onclick="setAccent('green')" title="Green"></div>
+        <div class="color-opt purple ${user.accentColor==='purple'?'active':''}" onclick="setAccent('purple')" title="Purple"></div>
+        <div class="color-opt orange ${user.accentColor==='orange'?'active':''}" onclick="setAccent('orange')" title="Orange"></div>
+        <div class="color-opt gold ${user.accentColor==='gold'?'active':''}" onclick="setAccent('gold')" title="Gold"></div>
+      </div>
+    </div>
+    <div style="margin-top:24px;width:100%;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+      <button class="btn-primary" onclick="openEditProfile()" style="flex:1;min-width:140px;">&#9999;&#65039; Edit Profile</button>
+      <button class="btn-primary" style="flex:1;min-width:140px;background:var(--danger);" onclick="doLogout()">&#128682; Logout</button>
+    </div>
+  </div>`;
+}
+function doLogout(){DB.logout();updateAuthUI();showSection('home');showToast('Logged out successfully!');}
+function openEditProfile(){
+  const user=DB.getCurrentUser();if(!user)return;
+  const modal=document.createElement('div');
+  modal.className='modal-overlay show';
+  modal.innerHTML=`<div class="modal" style="max-width:480px;">
+    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&#10005;</button>
+    <h2>&#9999;&#65039; Edit Profile</h2>
+    <div style="text-align:center;margin-bottom:16px;">
+      <div class="photo-upload-area" onclick="document.getElementById('edit-photo').click()">
+        <img id="edit-preview" class="photo-preview ${user.profilePhoto?'show':''}" src="${user.profilePhoto||''}" alt="">
+        <p style="color:var(--text2);font-size:13px;">&#128247; Change Photo</p>
+      </div>
+      <input type="file" id="edit-photo" accept="image/*" style="display:none" onchange="editPhotoPreview(event)">
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Full Name</label><input type="text" class="form-control" id="e-name" value="${user.name}"></div>
+      <div class="form-group"><label>Height (cm)</label><input type="number" class="form-control" id="e-height" value="${user.height||''}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Weight (kg)</label><input type="number" class="form-control" id="e-weight" value="${user.weight||''}"></div>
+      <div class="form-group"><label>Gym Join Date</label><input type="date" class="form-control" id="e-gymdate" value="${user.gymJoinDate||''}"></div>
+    </div>
+    <div class="form-group"><label>Email</label><input type="email" class="form-control" id="e-email" value="${user.email||''}"></div>
+    <button class="btn-primary" onclick="saveEditProfile()">Save Changes &rarr;</button>
+  </div>`;
+  document.body.appendChild(modal);
+}
+function editPhotoPreview(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>{const el=document.getElementById('edit-preview');el.src=ev.target.result;el.classList.add('show');};r.readAsDataURL(file);}
+function saveEditProfile(){
+  const user=DB.getCurrentUser();if(!user)return;
+  const p=document.getElementById('edit-preview');
+  user.name=document.getElementById('e-name').value.trim()||user.name;
+  user.height=parseInt(document.getElementById('e-height').value)||user.height;
+  user.weight=parseInt(document.getElementById('e-weight').value)||user.weight;
+  user.gymJoinDate=document.getElementById('e-gymdate').value||user.gymJoinDate;
+  user.email=document.getElementById('e-email').value.trim()||user.email;
+  if(p&&p.classList.contains('show')&&p.src&&p.src!==window.location.href)user.profilePhoto=p.src;
+  DB.setCurrentUser(user);
+  const users=DB.getUsers();const ui=users.findIndex(u=>u.id===user.id);
+  if(ui>=0){users[ui]=user;DB.saveUsers(users);}
+  document.querySelector('.modal-overlay.show:not(#modal-overlay)')?.remove();
+  updateAuthUI();renderProfile();showToast('Profile updated!');
+}
+function setTheme(theme){document.documentElement.setAttribute('data-theme',theme);const user=DB.getCurrentUser();if(user){user.theme=theme;DB.setCurrentUser(user);}}
+function setAccent(color){document.documentElement.setAttribute('data-accent',color);const user=DB.getCurrentUser();if(user){user.accentColor=color;DB.setCurrentUser(user);}renderProfile();}
+function toggleTranslate(sec){
+  STATE.lang[sec]=STATE.lang[sec]==='en'?'hi':'en';
+  const label=document.getElementById(sec+'-lang-label');
+  if(label)label.textContent=STATE.lang[sec]==='hi'?'English \u092E\u0947\u0902 \u0926\u0947\u0916\u0947\u0902':'\u0939\u093F\u0902\u0926\u0940 \u092E\u0947\u0902 \u0926\u0947\u0916\u0947\u0902';
+  if(sec==='workout')renderWorkouts();
+  if(sec==='diet')renderDiet();
+  if(sec==='rules')renderRules();
+  if(sec==='store')renderStore();
+}
+function filterWorkout(cat,btn){
+  STATE.workoutFilter=cat;
+  document.querySelectorAll('#sec-workout .tab-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderWorkouts();
+}
+function renderWorkouts(){
+  const workouts=DB.getWorkouts();
+  const lang=STATE.lang.workout;
+  const filtered=STATE.workoutFilter==='all'?workouts:workouts.filter(w=>w.category===STATE.workoutFilter);
+  const grid=document.getElementById('workout-grid');
+  if(!filtered.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1;"><span class="empty-icon">&#128170;</span><p>No workouts in this category.</p></div>`;return;}
+  grid.innerHTML=filtered.map(w=>{
+    const img=w.image?`<img src="${w.image}" alt="${w.name_en}" class="workout-img">`:
+      (w.id==='w3'?`<img src="Workout1.png.png" alt="${w.name_en}" class="workout-img" onerror="this.parentElement.innerHTML='<div class=\\'workout-img-ph\\'>&#127947;</div>'">`:
+      `<div class="workout-img-ph">&#127947;</div>`);
+    const howTo=(lang==='hi'?w.howTo_hi:w.howTo_en)||[];
+    return`<div class="workout-card">${img}<div class="workout-body">
+      <span class="workout-badge badge-${w.category}">${w.category.charAt(0).toUpperCase()+w.category.slice(1)}</span>
+      <h3 class="workout-title">${lang==='hi'?w.name_hi:w.name_en}</h3>
+      <p class="workout-muscles">&#128170; ${w.muscles}</p>
+      <p class="workout-desc">${lang==='hi'?w.description_hi:w.description_en}</p>
+      ${howTo.length?`<div class="workout-howto"><h4>&#9654; ${lang==='hi'?'कैसे करें':'How to Perform'}</h4><ol>${howTo.map(s=>`<li>${s}</li>`).join('')}</ol></div>`:''}
+      <p class="workout-sets">&#128202; ${w.sets}</p>
+      <p class="workout-disclaimer">&#9888;&#65039; ${lang==='hi'?'ट्रेनर की अनुमति के बिना भारी वजन न उठाएं। चोट के लिए आप जिम्मेदार होंगे।':'Consult trainer before heavy weights. You are responsible for any self-initiated injury.'}</p>
+    </div></div>`;
+  }).join('');
+}
+function calcProtein(){
+  const w=parseFloat(document.getElementById('calc-weight').value);
+  const h=parseFloat(document.getElementById('calc-height').value);
+  const goal=document.getElementById('calc-goal').value;
+  if(!w||!h){showToast('Please enter weight and height!','error');return;}
+  const factor={maintain:1.6,gain:2.0,loss:1.4}[goal];
+  const protein=Math.round(w*factor);
+  const bmi=(w/((h/100)**2)).toFixed(1);
+  const cals={maintain:Math.round(w*30),gain:Math.round(w*35),loss:Math.round(w*24)}[goal];
+  const bmiCat=bmi<18.5?'Underweight':bmi<25?'Normal Weight':bmi<30?'Overweight':'Obese';
+  const r=document.getElementById('calc-result');r.classList.add('show');
+  r.innerHTML=`<h4>&#128202; Your Daily Requirements</h4>
+    <p>&#9878;&#65039; <strong>BMI:</strong> ${bmi} (${bmiCat})</p>
+    <p>&#129385; <strong>Daily Protein:</strong> <strong style="color:var(--primary);font-size:18px;">${protein}g</strong> per day</p>
+    <p>&#128293; <strong>Daily Calories:</strong> ${cals} kcal</p>
+    <p>&#128167; <strong>Daily Water:</strong> ${(w*0.033).toFixed(1)} liters</p>
+    <p style="margin-top:8px;font-size:12px;color:var(--text3);">*Estimates only. Consult a nutritionist for personalized advice.</p>`;
+}
+function filterDiet(cat,btn){
+  STATE.dietFilter=cat;
+  document.querySelectorAll('#sec-diet .tab-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');renderDiet();
+}
+function renderDiet(){
+  const diet=DB.getDiet();const lang=STATE.lang.diet;
+  const filtered=STATE.dietFilter==='all'?diet:diet.filter(d=>d.type===STATE.dietFilter);
+  const grid=document.getElementById('diet-grid');
+  if(!filtered.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1;"><span class="empty-icon">&#129367;</span><p>No diet plans in this category.</p></div>`;return;}
+  const typeLabels={veg:'&#129382; Veg',nonveg:'&#127831; Non-Veg',gain:'&#128200; Weight Gain',loss:'&#128201; Weight Loss'};
+  grid.innerHTML=filtered.map(d=>`<div class="diet-card">
+    <span class="diet-type-badge diet-${d.type}">${typeLabels[d.type]||d.type}</span>
+    <h3 style="font-size:16px;font-weight:700;margin-bottom:8px;">${lang==='hi'?d.title_hi:d.title_en}</h3>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">${lang==='hi'?d.description_hi:d.description_en}</p>
+    <table class="meal-table"><thead><tr><th>Time</th><th>Meal</th><th>Protein</th><th>Cal</th></tr></thead>
+    <tbody>${d.meals.map(m=>`<tr><td style="white-space:nowrap;font-size:11px;color:var(--text3);">${m.time}</td><td>${lang==='hi'?m.food_hi:m.food_en}</td><td style="color:var(--primary);font-weight:700;">${m.protein}</td><td style="color:var(--text3);">${m.calories}</td></tr>`).join('')}</tbody></table>
+    ${(lang==='hi'?d.tips_hi:d.tips_en)?`<div style="margin-top:12px;background:var(--card2);border-radius:6px;padding:10px;font-size:12px;color:var(--text2);">&#128161; <strong>Tips:</strong> ${lang==='hi'?d.tips_hi:d.tips_en}</div>`:''}
+  </div>`).join('');
+}
+function renderRules(){
+  const rules=DB.getRules();const lang=STATE.lang.rules;
+  const list=document.getElementById('rules-list');
+  list.innerHTML=rules.sort((a,b)=>a.order-b.order).map((r,i)=>`
+    <div class="rule-item ${r.isSpecial?'rule-special':''}" style="position:relative;overflow:hidden;">
+      ${r.image?`<div style="position:absolute;inset:0;background:url('${r.image}') center/cover no-repeat;opacity:0.15;border-radius:inherit;pointer-events:none;"></div>`:''}
+      <div style="position:relative;z-index:1;display:flex;align-items:center;gap:12px;width:100%;">
+        <div class="rule-num">${i+1}</div>
+        <div class="rule-icon">${r.icon}</div>
+        <div><p class="rule-text">${lang==='hi'?r.text_hi:r.text_en}</p></div>
+      </div>
+    </div>`).join('');
+}
+
+function filterStore(cat,btn){
+  STATE.storeFilter=cat;
+  document.querySelectorAll('#sec-store .tab-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');renderStore();
+}
+function renderStore(){
+  const supplements=DB.getSupplements();const lang=STATE.lang.store;const user=DB.getCurrentUser();
+  let filtered=STATE.storeFilter==='all'?supplements:
+    STATE.storeFilter==='favorites'?(user?supplements.filter(s=>user.favorites&&user.favorites.includes(s.id)):[]):
+    supplements.filter(s=>s.category===STATE.storeFilter);
+  const grid=document.getElementById('store-grid');
+  if(!filtered.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1;"><span class="empty-icon">&#128717;</span><p>${STATE.storeFilter==='favorites'?'No favorites yet. Heart products to save!':'No products in this category.'}</p></div>`;return;}
+  const catIcons={protein:'&#128138;',creatine:'&#9889;',vitamins:'&#127807;',tools:'&#128296;',other:'&#128230;'};
+  grid.innerHTML=filtered.map(s=>{
+    const isFav=user&&user.favorites&&user.favorites.includes(s.id);
+    return`<div class="store-card">
+      ${s.image?`<img src="${s.image}" alt="${s.name_en}" class="store-img">`:
+        `<div class="store-img-ph">${catIcons[s.category]||'&#128230;'}</div>`}
+      <button class="fav-btn ${isFav?'active':''}" onclick="toggleFav('${s.id}',this)">${isFav?'&#10084;&#65039;':'&#129293;'}</button>
+      <div class="store-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span class="store-cat-badge">${catIcons[s.category]||''} ${s.category.charAt(0).toUpperCase()+s.category.slice(1)}</span>
+          <span style="font-size:10px;color:var(--warning);letter-spacing:1px;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        </div>
+        <h3 class="store-name">${lang==='hi'?s.name_hi:s.name_en}</h3>
+        <p class="store-desc">${lang==='hi'?s.description_hi:s.description_en}</p>
+        <div class="store-usage">&#128203; ${lang==='hi'?'\u0909\u092a\u092f\u094b\u0917: '+s.usage_hi:'Usage: '+s.usage_en}</div>
+        <p class="store-dosage">&#128138; ${lang==='hi'?'\u0916\u0941\u0930\u093e\u0915: '+s.dosage_hi:'Dosage: '+s.dosage_en}</p>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleFav(productId,btn){
+  const user=DB.getCurrentUser();
+  if(!user){showToast('Please login to save favorites!','error');openModal('login');return;}
+  if(!user.favorites)user.favorites=[];
+  const idx=user.favorites.indexOf(productId);
+  if(idx>=0){user.favorites.splice(idx,1);btn.innerHTML='&#129293;';btn.classList.remove('active');}
+  else{user.favorites.push(productId);btn.innerHTML='&#10084;&#65039;';btn.classList.add('active');}
+  DB.setCurrentUser(user);const users=DB.getUsers();const ui=users.findIndex(u=>u.id===user.id);
+  if(ui>=0){users[ui]=user;DB.saveUsers(users);}
+}
+function renderNotices(){
+  const notices=DB.getNotices();const settings=DB.getSettings();const user=DB.getCurrentUser();
+  const timing=settings.gymTiming||DEFAULT_SETTINGS.gymTiming;
+  document.getElementById('notice-timing-text').textContent=timing;
+  document.getElementById('timing-text').textContent=timing;
+  const list=document.getElementById('notice-list');
+  if(!notices.length){list.innerHTML=`<div class="empty-state"><span class="empty-icon">&#128203;</span><p>No notices yet. Check back soon!</p></div>`;return;}
+  const emojis=['&#128077;','&#10084;&#65039;','&#128170;','&#128293;','&#128588;'];
+  list.innerHTML=notices.sort((a,b)=>b.createdAt-a.createdAt).map(n=>{
+    const reactionCounts={};
+    Object.values(n.reactions||{}).forEach(e=>{reactionCounts[e]=(reactionCounts[e]||0)+1;});
+    const userReaction=user?n.reactions?.[user.id]:null;
+    return`<div class="notice-card ${n.isImportant?'important':''}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <span class="notice-date">${new Date(n.createdAt).toLocaleDateString('hi-IN')}</span>
+        ${n.isImportant?`<span style="background:var(--warning);color:#000;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;">&#128276; IMPORTANT</span>`:''}
+      </div>
+      <h3 class="notice-title">${n.title}</h3>
+      <p class="notice-content">${n.content}</p>
+      <div class="notice-reactions">
+        ${emojis.map(e=>`<button class="reaction-btn ${userReaction===e?'user-reacted':''}" onclick="reactNotice('${n.id}','${e}',this)">${e} <span class="reaction-count">${reactionCounts[e]||''}</span></button>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+function reactNotice(noticeId,emoji,btn){
+  const user=DB.getCurrentUser();
+  if(!user){showToast('Please login to react!','error');openModal('login');return;}
+  const notices=DB.getNotices();const notice=notices.find(n=>n.id===noticeId);if(!notice)return;
+  if(!notice.reactions)notice.reactions={};
+  notice.reactions[user.id]===emoji?delete notice.reactions[user.id]:notice.reactions[user.id]=emoji;
+  DB.saveNotices(notices);renderNotices();
+}
+function updateNotifBadge(){
+  const notifs=DB.getNotifications().filter(n=>!n.read);
+  const badge=document.getElementById('notif-count');
+  if(notifs.length){badge.textContent=notifs.length>9?'9+':notifs.length;badge.classList.remove('hidden');}
+  else badge.classList.add('hidden');
+}
+function renderNotifications(){
+  const notifs=DB.getNotifications();const list=document.getElementById('notif-list');
+  if(!notifs.length){list.innerHTML=`<div class="notif-empty">&#128276; No notifications yet</div>`;return;}
+  list.innerHTML=notifs.sort((a,b)=>b.time-a.time).map(n=>`
+    <div class="notif-item ${n.read?'':'unread'}" onclick="markRead('${n.id}')">
+      <p>${n.icon||'&#128276;'} ${n.message}</p>
+      <div class="notif-time">${new Date(n.time).toLocaleString('hi-IN')}</div>
+    </div>`).join('');
+}
+function markRead(id){const notifs=DB.getNotifications();const n=notifs.find(x=>x.id===id);if(n)n.read=true;DB.saveNotifications(notifs);updateNotifBadge();renderNotifications();}
+function markAllRead(){const notifs=DB.getNotifications();notifs.forEach(n=>n.read=true);DB.saveNotifications(notifs);updateNotifBadge();renderNotifications();}
+function addNotification(msg,icon='&#128276;'){
+  const notifs=DB.getNotifications();
+  notifs.unshift({id:'n'+Date.now(),message:msg,icon,time:Date.now(),read:false});
+  if(notifs.length>50)notifs.splice(50);
+  DB.saveNotifications(notifs);updateNotifBadge();
+}
+function checkExpiryNotifications(){
+  const user=DB.getCurrentUser();if(!user||!user.membershipExpiry)return;
+  const daysLeft=Math.ceil((new Date(user.membershipExpiry)-Date.now())/(1000*60*60*24));
+  if(daysLeft<=2&&daysLeft>=0){
+    const msg=`Your membership expires ${daysLeft===0?'today':daysLeft+' days'}! Contact Prakash Kumar: +919653071697`;
+    const notifs=DB.getNotifications();
+    const alreadyExists=notifs.some(n=>n.message.includes('membership expires')&&Date.now()-n.time<12*60*60*1000);
+    if(!alreadyExists)addNotification(msg,'&#9888;&#65039;');
+  }
+}
+function loadMySubscription(){
+  const user=DB.getCurrentUser();const sec=document.getElementById('my-subscription');if(!sec)return;
+  if(!user){sec.style.display='none';return;}
+  sec.style.display='block';
+  const fees=DB.getFees().filter(f=>f.userId===user.id).sort((a,b)=>b.createdAt-a.createdAt);
+  const sub=document.getElementById('subscription-details');
+  if(!fees.length){sub.innerHTML=`<p style="color:var(--text3);">No payment records found. Contact gym admin to record your payment.</p>`;return;}
+  const last=fees[0];const exp=last.expiryDate?new Date(last.expiryDate):null;
+  const daysLeft=exp?Math.ceil((exp-Date.now())/(1000*60*60*24)):null;
+  sub.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <div class="stat-item"><div class="stat-label">Plan</div><div class="stat-value" style="font-size:14px;">${last.plan||'&#8212;'}</div></div>
+    <div class="stat-item"><div class="stat-label">Amount Paid</div><div class="stat-value">&#8377;${last.amount}</div></div>
+    <div class="stat-item"><div class="stat-label">Start Date</div><div class="stat-value" style="font-size:13px;">${last.startDate||'&#8212;'}</div></div>
+    <div class="stat-item"><div class="stat-label">Expiry</div><div class="stat-value" style="font-size:13px;color:${daysLeft!==null&&daysLeft<=7?'var(--danger)':'var(--primary)'};">${last.expiryDate||'&#8212;'}</div></div>
+  </div>
+  ${daysLeft!==null?`<div style="margin-top:12px;padding:10px;background:${daysLeft<=2?'rgba(255,51,85,0.1)':'rgba(0,204,102,0.1)'};border-radius:6px;color:${daysLeft<=2?'var(--danger)':'var(--success)'};">${daysLeft<=0?'&#10007; Subscription Expired!':daysLeft<=2?`&#9888;&#65039; Expiring in ${daysLeft} days! Renew now.`:`&#10003; ${daysLeft} days remaining`}</div>`:''}`;
+}
+function loadSocialLinks(){
+  const settings=DB.getSettings();const links=settings.socialLinks||DEFAULT_SETTINGS.socialLinks;
+  ['instagram','telegram','twitter'].forEach(key=>{
+    const el=document.getElementById('sl-'+key);if(!el||!links[key])return;
+    const icons={instagram:'&#128248;',telegram:'&#9992;&#65039;',twitter:'&#128038;'};
+    const a=document.createElement('a');a.href=links[key];a.target='_blank';a.className='social-link';a.id='sl-'+key;
+    a.innerHTML=`<span class="s-icon">${icons[key]}</span><span class="s-name">${key.charAt(0).toUpperCase()+key.slice(1)}</span>`;
+    el.replaceWith(a);
+  });
+}
+function initCanvas(){
+  const canvas=document.getElementById('canvas-bg');const ctx=canvas.getContext('2d');let W,H,particles=[];
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  class P{constructor(){this.reset();}reset(){this.x=Math.random()*W;this.y=Math.random()*H;this.size=Math.random()*1.5+0.5;this.vx=(Math.random()-0.5)*0.3;this.vy=(Math.random()-0.5)*0.3;this.a=Math.random()*0.3+0.05;this.c=['#00b4ff','#0080ff','#ffffff'][Math.floor(Math.random()*3)];}update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>W||this.y<0||this.y>H)this.reset();}draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.globalAlpha=this.a;ctx.fillStyle=this.c;ctx.fill();}}
+  for(let i=0;i<80;i++)particles.push(new P());
+  function animate(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{p.update();p.draw();});
+    ctx.globalAlpha=0.04;
+    for(let i=0;i<particles.length;i++)for(let j=i+1;j<particles.length;j++){const d=Math.hypot(particles[i].x-particles[j].x,particles[i].y-particles[j].y);if(d<120){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle='#00b4ff';ctx.lineWidth=0.5;ctx.stroke();}}
+    ctx.globalAlpha=1;requestAnimationFrame(animate);
+  }animate();
+}
+window.addEventListener('load',()=>{
+  setTimeout(()=>{const l=document.getElementById('loader');l.style.opacity='0';l.style.transition='opacity 0.5s';setTimeout(()=>l.remove(),500);},2000);
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  initCanvas();updateAuthUI();renderWorkouts();renderDiet();renderRules();loadSocialLinks();updateNotifBadge();
+  const settings=DB.getSettings();const timing=settings.gymTiming||DEFAULT_SETTINGS.gymTiming;
+  document.getElementById('timing-text').textContent=timing;
+  document.getElementById('notice-timing-text').textContent=timing;
+  const user=DB.getCurrentUser();
+  if(user){if(user.theme)document.documentElement.setAttribute('data-theme',user.theme);if(user.accentColor)document.documentElement.setAttribute('data-accent',user.accentColor);}
+  checkExpiryNotifications();
+  initQuickCustomizer();
+  renderTodayWorkout();
+  document.getElementById('notif-btn').addEventListener('click',function(e){e.stopPropagation();const p=document.getElementById('notif-panel');p.classList.toggle('show');renderNotifications();if(p.classList.contains('show'))markAllRead();});
+  document.addEventListener('click',e=>{if(!e.target.closest('#notif-panel')&&!e.target.closest('#notif-btn'))document.getElementById('notif-panel').classList.remove('show');if(e.target===document.getElementById('modal-overlay'))closeModal();});
+  setInterval(checkExpiryNotifications,6*60*60*1000);
+});
+
+// ================================================================
+// WIDGET: LIVE CLOCK
+// ================================================================
+const _WDAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const _WMONS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function _wClock(){
+  const n=new Date();
+  const s=v=>String(v).padStart(2,'0');
+  const ce=document.getElementById('w-clock');if(ce)ce.textContent=s(n.getHours())+':'+s(n.getMinutes())+':'+s(n.getSeconds());
+  const de=document.getElementById('w-date');if(de)de.textContent=_WDAYS[n.getDay()]+', '+n.getDate()+' '+_WMONS[n.getMonth()]+' '+n.getFullYear();
+}
+setInterval(_wClock,1000);
+_wClock();
+
+// ================================================================
+// WIDGET: STOPWATCH
+// ================================================================
+let _swRunning=false,_swElapsed=0,_swStart=0,_swTimer=null;
+function swToggle(){
+  if(!_swRunning){
+    _swStart=Date.now()-_swElapsed;
+    _swTimer=setInterval(_swTick,200);
+    _swRunning=true;
+    const b=document.getElementById('sw-start-btn');
+    if(b){b.innerHTML='&#9646;&#9646; Pause';b.className='sw-btn sw-stop';}
+  } else {
+    clearInterval(_swTimer);_swElapsed=Date.now()-_swStart;_swRunning=false;
+    const b=document.getElementById('sw-start-btn');
+    if(b){b.innerHTML='&#9654; Resume';b.className='sw-btn sw-start';}
+  }
+}
+function _swTick(){
+  const t=Math.floor((Date.now()-_swStart)/1000);
+  const e=document.getElementById('sw-display');
+  if(e)e.textContent=String(Math.floor(t/3600)).padStart(2,'0')+':'+String(Math.floor((t%3600)/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
+}
+function swReset(){
+  clearInterval(_swTimer);_swRunning=false;_swElapsed=0;
+  const e=document.getElementById('sw-display');if(e)e.textContent='00:00:00';
+  const b=document.getElementById('sw-start-btn');if(b){b.innerHTML='&#9654; Start';b.className='sw-btn sw-start';}
+}
+
+// ================================================================
+// WIDGET: TAP / REP COUNTER
+// ================================================================
+let _tapN=parseInt(localStorage.getItem('phc_tapcount')||'0');
+(()=>{const e=document.getElementById('tap-count');if(e)e.textContent=_tapN;})();
+function tapAdd(){
+  _tapN++;
+  localStorage.setItem('phc_tapcount',String(_tapN));
+  const e=document.getElementById('tap-count');
+  if(e){e.textContent=_tapN;e.style.transform='scale(1.4)';setTimeout(()=>e.style.transform='scale(1)',130);}
+}
+function tapReset(){
+  _tapN=0;localStorage.setItem('phc_tapcount','0');
+  const e=document.getElementById('tap-count');if(e)e.textContent='0';
+}
+
+// ================================================================
+// WIDGET: TODAY'S WORKOUT PLAN
+// ================================================================
+const WEEKLY_PLAN=[
+  {isRest:true,day:'Sunday',muscle:'Rest Day'},
+  {day:'Monday',icon:'\uD83D\uDCAA',muscle:'Chest + Triceps',
+   exercises:['Bench Press  4\u00d710 reps','Incline DB Press  3\u00d712','Cable Crossover  3\u00d715','Tricep Pushdown  3\u00d715','Skull Crushers  3\u00d712','Push-Ups to Failure']},
+  {day:'Tuesday',icon:'\uD83C\uDFCB\uFE0F',muscle:'Back + Biceps',
+   exercises:['Deadlift  3\u00d76','Pull-Ups  3\u00d7Max','Barbell Row  4\u00d710','Lat Pulldown  3\u00d712','Dumbbell Curl  3\u00d715','Hammer Curl  3\u00d715']},
+  {day:'Wednesday',icon:'\uD83D\uDD25',muscle:'Shoulders + Abs',
+   exercises:['Overhead Press  4\u00d710','Lateral Raise  3\u00d715','Front Raise  3\u00d712','Face Pull  3\u00d715','Plank  3\u00d760s','Crunches  3\u00d720']},
+  {day:'Thursday',icon:'\uD83E\uDDB5',muscle:'Legs',
+   exercises:['Squat  4\u00d712','Leg Press  3\u00d715','Leg Curl  3\u00d715','Leg Extension  3\u00d715','Calf Raise  4\u00d720','Lunges  3\u00d712 each']},
+  {day:'Friday',icon:'\uD83D\uDCAA',muscle:'Chest + Triceps',
+   exercises:['DB Bench Press  4\u00d712','Decline Press  3\u00d712','Pec Deck  3\u00d715','Dips  3\u00d7Max','Tricep OH Extension  3\u00d712','Diamond Push-Ups  2\u00d715']},
+  {day:'Saturday',icon:'\u26A1',muscle:'Back + Biceps + Cardio',
+   exercises:['Barbell Row  4\u00d710','Seated Row  3\u00d712','T-Bar Row  3\u00d710','Concentration Curl  3\u00d715','Preacher Curl  3\u00d712','20 min Cardio']}
+];
+function renderTodayWorkout(){
+  const box=document.getElementById('today-workout-box');if(!box)return;
+  const plan=WEEKLY_PLAN[new Date().getDay()];
+  if(!plan||plan.isRest){
+    box.innerHTML='<div class="rest-day"><span class="rest-icon">\uD83D\uDE34</span><p style="color:var(--success);font-weight:700;font-size:15px;">Rest Day!</p><p style="margin-top:8px;font-size:13px;color:var(--text2);">Body ko recover hone do.\u00a0\uD83D\uDEB6 Halka walk ya stretching karo.</p></div>';
+    return;
+  }
+  const key='phc_wplan_'+new Date().toDateString();
+  let done={};try{done=JSON.parse(localStorage.getItem(key)||'{}');}catch{}
+  const total=plan.exercises.length;
+  const doneCount=plan.exercises.filter((_,i)=>done[i]).length;
+  const pct=total?Math.round(doneCount/total*100):0;
+  const list=plan.exercises.map((ex,i)=>`<li class="${done[i]?'done':''}" onclick="toggleEx(${i},'${key}')"><div class="ex-check">${done[i]?'&#10003;':''}</div><span class="ex-name">${ex}</span></li>`).join('');
+  box.innerHTML=`<span class="day-badge">${plan.day}</span><br><span class="muscle-tag">${plan.icon} ${plan.muscle}</span><ul class="exercise-checklist">${list}</ul><div class="workout-progress"><div class="workout-progress-fill" style="width:${pct}%"></div></div><div class="workout-progress-txt"><span>${doneCount}/${total} done</span><span>${pct}%</span></div>`;
+}
+function toggleEx(idx,key){
+  let done={};try{done=JSON.parse(localStorage.getItem(key)||'{}');}catch{}
+  done[idx]=!done[idx];localStorage.setItem(key,JSON.stringify(done));
+  renderTodayWorkout();
+}
+
+// ================================================================
+// QUICK COLOR CUSTOMIZER
+// ================================================================
+function qSetTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  const user=DB.getCurrentUser();if(user){user.theme=t;DB.setCurrentUser(user);}
+  _qSyncTheme(t);
+}
+function qSetAccent(c){
+  document.documentElement.setAttribute('data-accent',c);
+  const user=DB.getCurrentUser();if(user){user.accentColor=c;DB.setCurrentUser(user);}
+  _qSyncAccent(c);
+}
+function _qSyncTheme(t){document.querySelectorAll('.theme-pill').forEach(p=>p.classList.toggle('active',p.id==='qtheme-'+t));}
+function _qSyncAccent(c){document.querySelectorAll('.qdot').forEach(d=>d.classList.toggle('qactive',d.classList.contains(c)));}
+function initQuickCustomizer(){
+  const t=document.documentElement.getAttribute('data-theme')||'dark';
+  const c=document.documentElement.getAttribute('data-accent')||'blue';
+  _qSyncTheme(t);_qSyncAccent(c);
+}
+
+
+// Show / Hide password toggle
+function togglePass(inputId, btn){
+  const inp=document.getElementById(inputId);if(!inp)return;
+  if(inp.type==='password'){
+    inp.type='text';
+    btn.innerHTML='&#128064;';  // open eye
+    btn.title='Hide password';
+  } else {
+    inp.type='password';
+    btn.innerHTML='&#128065;'; // eye with line
+    btn.title='Show password';
+  }
+}
+
+
+// ================================================================
+// SECRET KEY: Type "PRAKASHKUMAR@+919653071697" anywhere on page
+// OR press Admin button if typed in console / field
+// ================================================================
+(function(){
+  let _keyBuf='';
+  const SECRET='PRAKASHKUMAR@+919653071697';
+  document.addEventListener('keypress',function(e){
+    _keyBuf+=e.key;
+    if(_keyBuf.length>SECRET.length)_keyBuf=_keyBuf.slice(-SECRET.length);
+    if(_keyBuf===SECRET){
+      _keyBuf='';
+      // Show mini toast then redirect
+      showToast('\uD83D\uDD11 Admin Access Granted! Opening panel...','success');
+      const ab=document.getElementById('admin-quick-btn');if(ab)ab.style.display='block';
+      setTimeout(()=>window.open('admin.html','_blank'),1200);
+    }
+  });
+})();
+
+// Admin quick-access button (visible only when typing secret)
+function openAdminPanel(){window.open('admin.html','_blank');}
+
+</script>
+</body>
+</html>
