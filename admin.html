@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - Power Health Club</title>
+<link rel="icon" href="Icon.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#00b4ff;--primary-dark:#0080cc;--accent:#ff6b00;--bg:#0a0a1a;--bg2:#111126;--bg3:#1a1a35;--card:#161630;--card2:#1e1e40;--text:#e0e8ff;--text2:#a0aed0;--text3:#6070a0;--border:#2a2a55;--border2:#3a3a70;--success:#00cc66;--warning:#ffaa00;--danger:#ff3355;--font-head:'Orbitron',sans-serif;--font-body:'Poppins',sans-serif;--radius:12px;--radius-sm:8px;--transition:all 0.3s ease;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;}
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--bg),var(--bg2));}
+.login-card{background:var(--card);border:1px solid var(--border2);border-radius:20px;padding:40px;max-width:400px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.7);}
+.login-card img{width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);margin-bottom:16px;}
+.login-card h2{font-family:var(--font-head);color:var(--primary);font-size:18px;letter-spacing:2px;margin-bottom:4px;}
+.login-card p{color:var(--text3);font-size:13px;margin-bottom:24px;}
+.form-group{margin-bottom:16px;text-align:left;}
+.form-group label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:1px;}
+.form-control{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:var(--radius-sm);font-size:14px;font-family:var(--font-body);}
+.form-control:focus{outline:none;border-color:var(--primary);}
+.btn-primary{width:100%;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none;padding:13px;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font-body);transition:var(--transition);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,180,255,0.4);}
+#admin-app{display:none;}
+.admin-header{background:rgba(10,10,26,0.98);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.admin-header h1{font-family:var(--font-head);font-size:16px;color:var(--primary);letter-spacing:2px;}
+.admin-layout{display:flex;min-height:calc(100vh - 60px);}
+.sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--border);padding:16px 0;flex-shrink:0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;}
+.sidebar-btn{display:flex;align-items:center;gap:10px;width:100%;background:transparent;border:none;color:var(--text2);padding:12px 20px;cursor:pointer;font-size:13px;font-weight:600;font-family:var(--font-body);transition:var(--transition);text-align:left;}
+.sidebar-btn:hover,.sidebar-btn.active{background:rgba(0,180,255,0.1);color:var(--primary);border-right:3px solid var(--primary);}
+.admin-content{flex:1;padding:24px;overflow-y:auto;}
+.page{display:none;}.page.active{display:block;}
+.page-title{font-family:var(--font-head);font-size:20px;color:var(--primary);margin-bottom:20px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:24px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;}
+.stat-num{font-size:36px;font-weight:900;color:var(--primary);font-family:var(--font-head);}
+.stat-label{font-size:13px;color:var(--text2);margin-top:4px;}
+table{width:100%;border-collapse:collapse;}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);font-size:13px;}
+th{background:var(--card2);color:var(--primary);font-weight:700;font-size:12px;text-transform:uppercase;}
+tr:hover{background:rgba(0,180,255,0.03);}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;}
+.badge-active{background:rgba(0,204,102,0.2);color:var(--success);}
+.badge-expired{background:rgba(255,51,85,0.2);color:var(--danger);}
+.badge-visitor{background:rgba(100,100,100,0.2);color:var(--text3);}
+.action-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.btn{padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer;font-weight:700;font-size:13px;border:none;font-family:var(--font-body);transition:var(--transition);}
+.btn-success{background:var(--success);color:#fff;}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-warning{background:var(--warning);color:#000;}
+.btn-sm{padding:4px 10px;font-size:11px;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:20px;padding:28px;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;position:relative;}
+.modal h3{color:var(--primary);font-size:16px;margin-bottom:16px;}
+.modal-close{position:absolute;top:12px;right:12px;background:transparent;border:none;color:var(--text3);font-size:20px;cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;}
+.modal-close:hover{background:var(--card2);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-group{margin-bottom:12px;}
+.form-group label{display:block;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:600;}
+textarea.form-control{min-height:80px;resize:vertical;}
+.err-msg{color:var(--danger);font-size:12px;margin-top:8px;display:none;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg2);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+@media(max-width:600px){.sidebar{width:60px;}.sidebar-btn span:not(.icon){display:none;}.form-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <img src="Icon.jpg" alt="Logo" onerror="this.style.display='none'">
+    <h2>ADMIN PANEL</h2>
+    <p>Power Health Club - Authorized Access Only</p>
+    <div class="form-group"><label>Username</label><input type="text" class="form-control" id="a-username" placeholder="Admin username"></div>
+    <div class="form-group"><label>Password</label><div style="position:relative;"><input type="password" class="form-control" id="a-password" placeholder="Password" onkeydown="if(event.key==='Enter')adminLogin()" style="padding-right:44px;"><button type="button" onclick="var i=document.getElementById('a-password');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'👁':'👀';" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#6070a0;cursor:pointer;font-size:17px;padding:0;line-height:1;" tabindex="-1">👁</button></div></div>
+    <button class="btn-primary" onclick="adminLogin()">&#128274; Login to Admin</button>
+
+    <div id="login-err" style="color:var(--danger);font-size:13px;margin-top:8px;display:none;"></div>
+    <p style="margin-top:16px;font-size:12px;color:var(--text3);"><a href="index.html" style="color:var(--primary);">&#8592; Back to Website</a></p>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="admin-app">
+  <div class="admin-header">
+    <h1>&#9881;&#65039; ADMIN PANEL</h1>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span id="admin-welcome" style="font-size:13px;color:var(--text2);"></span>
+      <button class="btn btn-danger btn-sm" onclick="adminLogout()">&#128682; Logout</button>
+      <a href="index.html" target="_blank" class="btn btn-sm" style="background:var(--primary);color:#fff;text-decoration:none;">&#127760; View Site</a>
+    </div>
+  </div>
+  <div class="admin-layout">
+    <div class="sidebar">
+      <button class="sidebar-btn active" onclick=\"showPage('dashboard',this)\"><span>&#128202;</span> <span>Dashboard</span></button>
+      <button class="sidebar-btn" onclick=\"showPage('members',this)\"><span>&#128100;</span> <span>Members</span></button>
+      <button class="sidebar-btn" onclick=\"showPage('fees',this)\"><span>&#128176;</span> <span>Fees</span></button>
+      <button class="sidebar-btn" onclick=\"showPage('notices',this)\"><span>&#128226;</span> <span>Notices</span></button>
+      <button class="sidebar-btn" onclick=\"showPage('workouts',this)\"><span>&#128170;</span> <span>Workouts</span></button>
+      <button class="sidebar-btn" onclick=\"showPage('diet',this)\"><span>&#129367;</span> <span>Diet</span></button>
+      <button class="sidebar-btn" onclick=\"showPage('rules',this)\"><span>&#128203;</span> <span>Rules</span></button>
+      <button class="sidebar-btn" onclick=\"showPage('store',this)\"><span>&#128717;</span> <span>Store</span></button>
+      <button class="sidebar-btn" onclick=\"showPage('settings',this)\"><span>&#9881;&#65039;</span> <span>Settings</span></button>
+      <button class="sidebar-btn" onclick=\"showPage('admins',this)\"><span>&#128274;</span> <span>Admins</span></button>
+    </div>
+    <div class="admin-content">
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-title">&#128202; Dashboard</div>
+        <div class="stat-grid" id="dash-stats"></div>
+        <div class="card">
+          <h3 style="color:var(--primary);margin-bottom:12px;">&#128276; Send Notification to All</h3>
+          <div class="form-group"><label>Message</label><textarea class="form-control" id="notif-msg" placeholder="Type notification message..."></textarea></div>
+          <button class="btn btn-success" onclick="sendBroadcast()">&#128236; Send to All Members</button>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--warning);margin-bottom:12px;">&#9888;&#65039; Expiring Soon</h3>
+          <div id="expiry-list"></div>
+        </div>
+      </div>
+      <!-- MEMBERS -->
+      <div class="page" id="page-members">
+        <div class="page-title">&#128100; Member Management</div>
+        <div class="action-bar">
+          <input type="text" class="form-control" id="member-search" placeholder="Search members..." style="flex:1;max-width:300px;" oninput="renderMembers()">
+          <button class="btn btn-success" onclick="exportMembers()">&#128229; Export CSV</button>
+        </div>
+        <div style="overflow-x:auto;"><table id="members-table"><thead><tr><th>#</th><th>Name</th><th>Username</th><th>Mobile</th><th>Height</th><th>Weight</th><th>Gym Since</th><th>Status</th><th>Expiry</th><th>Actions</th></tr></thead><tbody id="members-tbody"></tbody></table></div>
+      </div>
+      <!-- FEES -->
+      <div class="page" id="page-fees">
+        <div class="page-title">&#128176; Fee Management</div>
+        <div class="action-bar">
+          <button class="btn btn-success" onclick="openAddFee()">&#10010; Add Fee Record</button>
+          <button class="btn" style="background:var(--primary);color:#fff;" onclick="exportFees()">&#128229; Export CSV</button>
+        </div>
+        <div style="overflow-x:auto;"><table><thead><tr><th>Member</th><th>Plan</th><th>Amount</th><th>Start</th><th>Expiry</th><th>Method</th><th>Recorded By</th><th>Actions</th></tr></thead><tbody id="fees-tbody"></tbody></table></div>
+      </div>
+      <!-- NOTICES -->
+      <div class="page" id="page-notices">
+        <div class="page-title">&#128226; Notice Board Management</div>
+        <div class="action-bar">
+          <button class="btn btn-success" onclick="openAddNotice()">&#10010; Add Notice</button>
+        </div>
+        <div id="notices-list"></div>
+      </div>
+      <!-- WORKOUTS -->
+      <div class="page" id="page-workouts">
+        <div class="page-title">&#128170; Workout Management</div>
+        <div class="action-bar"><button class="btn btn-success" onclick="openAddWorkout()">&#10010; Add Workout</button></div>
+        <div id="workouts-list"></div>
+      </div>
+      <!-- DIET -->
+      <div class="page" id="page-diet">
+        <div class="page-title">&#129367; Diet Plan Management</div>
+        <div class="action-bar"><button class="btn btn-success" onclick="openAddDiet()">&#10010; Add Diet Plan</button></div>
+        <div id="diet-list"></div>
+      </div>
+      <!-- RULES -->
+      <div class="page" id="page-rules">
+        <div class="page-title">&#128203; Rules Management</div>
+        <div class="action-bar"><button class="btn btn-success" onclick="openAddRule()">&#10010; Add Rule</button></div>
+        <div id="rules-admin-list"></div>
+      </div>
+      <!-- STORE -->
+      <div class="page" id="page-store">
+        <div class="page-title">&#128717; Store Management</div>
+        <div class="action-bar"><button class="btn btn-success" onclick="openAddSupplement()">&#10010; Add Product</button></div>
+        <div id="store-admin-list"></div>
+      </div>
+      <!-- SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="page-title">&#9881;&#65039; App Settings</div>
+        <div class="card">
+          <h3 style="color:var(--primary);margin-bottom:16px;">&#9200; Gym Timing</h3>
+          <div class="form-group"><label>Timing (shown above notice board)</label><textarea class="form-control" id="gym-timing" rows="4"></textarea></div>
+          <button class="btn btn-success" onclick="saveGymTiming()">Save Timing</button>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--primary);margin-bottom:16px;">&#127760; Social Media Links</h3>
+          <div class="form-group"><label>WhatsApp Group Link</label><input type="url" class="form-control" id="s-whatsapp" placeholder="https://chat.whatsapp.com/..."></div>
+          <div class="form-group"><label>YouTube Channel</label><input type="url" class="form-control" id="s-youtube" placeholder="https://youtube.com/@..."></div>
+          <div class="form-group"><label>Instagram</label><input type="url" class="form-control" id="s-instagram" placeholder="https://instagram.com/..."></div>
+          <div class="form-group"><label>Telegram</label><input type="url" class="form-control" id="s-telegram" placeholder="https://t.me/..."></div>
+          <div class="form-group"><label>Twitter/X</label><input type="url" class="form-control" id="s-twitter" placeholder="https://twitter.com/..."></div>
+          <button class="btn btn-success" onclick="saveSocialLinks()">Save Social Links</button>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--primary);margin-bottom:16px;">&#128247; Update Logo</h3>
+          <input type="file" id="logo-input" accept="image/*" class="form-control" style="margin-bottom:8px;">
+          <p style="font-size:12px;color:var(--text3);">Note: Replace Icon.jpg file in F:/Gym/ folder to update logo permanently.</p>
+        </div>
+      </div>
+      <!-- ADMINS -->
+      <div class="page" id="page-admins">
+        <div class="page-title">&#128274; Admin Users</div>
+        <div class="action-bar"><button class="btn btn-success" onclick="openAddAdmin()">&#10010; Add Admin</button></div>
+        <div id="admins-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="a-modal-overlay">
+  <div class="modal" id="a-modal-content"></div>
+</div>
+
+<script>
+const DB={
+  get(k,d){try{return JSON.parse(localStorage.getItem('phc_'+k))||d;}catch{return d;}},
+  set(k,v){localStorage.setItem('phc_'+k,JSON.stringify(v));},
+  getUsers(){return this.get('users',[]);},saveUsers(u){this.set('users',u);},
+  getWorkouts(){return this.get('workouts',[]); },saveWorkouts(d){this.set('workouts',d);},
+  getDiet(){return this.get('diet',[]);},saveDiet(d){this.set('diet',d);},
+  getRules(){return this.get('rules',[]);},saveRules(d){this.set('rules',d);},
+  getNotices(){return this.get('notices',[]);},saveNotices(d){this.set('notices',d);},
+  getSupplements(){return this.get('supplements',[]);},saveSupplements(d){this.set('supplements',d);},
+  getSettings(){return this.get('settings',{gymTiming:'Monday - Saturday: 5:00 AM - 10:00 AM | 4:00 PM - 10:00 PM\nSunday: 6:00 AM - 9:00 AM',socialLinks:{whatsapp:'',youtube:'',instagram:'',telegram:'',twitter:''}});},saveSettings(d){this.set('settings',d);},
+  getFees(){return this.get('fees',[]);},saveFees(d){this.set('fees',d);},
+  getNotifications(){return this.get('notifications',[]);},saveNotifications(d){this.set('notifications',d);},
+};
+const DEFAULT_ADMINS=[{username:'Prakashkumar',password:btoa('Prakash@1697'),name:'Prakash Kumar',role:'owner'},{username:'Ayushkumar',password:btoa('Prakash@1697'),name:'Ayush Kumar',role:'developer'}];
+let currentAdmin=null;
+function getAdmins(){try{return JSON.parse(localStorage.getItem('phc_admins'))||DEFAULT_ADMINS;}catch{return DEFAULT_ADMINS;}}
+function saveAdmins(a){localStorage.setItem('phc_admins',JSON.stringify(a));}
+function adminLogin(){
+  const u=document.getElementById('a-username').value.trim();
+  const p=document.getElementById('a-password').value;
+  // Check secret key shortcut
+  if(u==='PRAKASHKUMAR@+919653071697'||p==='PRAKASHKUMAR@+919653071697'){
+    checkSecretKeys(u==='PRAKASHKUMAR@+919653071697'?u:p);return;
+  }
+  const admins=getAdmins();
+  let matched=null;
+  for(const a of admins){
+    let pm=false;
+    try{pm=a.password===btoa(unescape(encodeURIComponent(p)));}catch(e){}
+    if(!pm){try{pm=a.password===btoa(p);}catch(e){}}
+    if(a.username.toLowerCase()===u.toLowerCase()&&pm){matched=a;break;}
+  }
+  if(!matched){
+    const el=document.getElementById('login-err');
+    el.textContent='Invalid credentials! / गलत username या password';
+    el.style.display='block';
+    setTimeout(()=>el.style.display='none',4000);return;
+  }
+  openAdminDashboard(matched);
+}
+function openAdminDashboard(admin){
+  currentAdmin=admin;
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('admin-app').style.display='block';
+  document.getElementById('admin-welcome').textContent='Welcome, '+admin.name+' ('+admin.role+')';
+  loadDashboard();loadSettings();
+}
+function checkSecretKeys(key){
+  // Check default master key
+  const masterKey='PRAKASHKUMAR@+919653071697';
+  const extraKeys=getSecretKeys();
+  const allKeys=[masterKey,...extraKeys];
+  if(allKeys.includes(key)){
+    // Login as first owner admin
+    const admins=getAdmins();
+    const owner=admins.find(a=>a.role==='owner')||admins[0];
+    if(owner){openAdminDashboard(owner);}
+    return;
+  }
+  const el=document.getElementById('login-err');
+  el.textContent='Invalid secret key!';el.style.display='block';
+  setTimeout(()=>el.style.display='none',3000);
+}
+function getSecretKeys(){try{return JSON.parse(localStorage.getItem('phc_secret_keys'))||[];}catch{return [];}}
+function saveSecretKeys(keys){localStorage.setItem('phc_secret_keys',JSON.stringify(keys));}
+function adminLogout(){currentAdmin=null;document.getElementById('login-screen').style.display='flex';document.getElementById('admin-app').style.display='none';}
+function showPage(id, btnEl){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-btn').forEach(b=>b.classList.remove('active'));
+  const page=document.getElementById('page-'+id);
+  if(page)page.classList.add('active');
+  if(btnEl)btnEl.classList.add('active');
+  else{const nb=document.querySelector('[onclick*="showPage(\''+id+"'"]');if(nb)nb.classList.add('active');}
+  if(id==='dashboard')loadDashboard();
+  if(id==='members')renderMembers();
+  if(id==='fees')renderFees();
+  if(id==='notices')renderNoticesAdmin();
+  if(id==='workouts')renderWorkoutsAdmin();
+  if(id==='diet')renderDietAdmin();
+  if(id==='rules')renderRulesAdmin();
+  if(id==='store')renderStoreAdmin();
+  if(id==='admins')renderAdmins();
+  if(id==='settings')loadSettings();
+}
+function loadDashboard(){
+  const users=DB.getUsers();const fees=DB.getFees();const notices=DB.getNotices();
+  const activeMembers=users.filter(u=>u.isMember).length;
+  const expiringUsers=users.filter(u=>{if(!u.membershipExpiry)return false;const d=Math.ceil((new Date(u.membershipExpiry)-Date.now())/(86400000));return d<=7&&d>=0;});
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-num">${users.length}</div><div class="stat-label">Total Users</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--success);">${activeMembers}</div><div class="stat-label">Active Members</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--warning);">${expiringUsers.length}</div><div class="stat-label">Expiring Soon</div></div>
+    <div class="stat-card"><div class="stat-num">${fees.length}</div><div class="stat-label">Fee Records</div></div>
+    <div class="stat-card"><div class="stat-num">${notices.length}</div><div class="stat-label">Notices</div></div>`;
+  const expiryDiv=document.getElementById('expiry-list');
+  if(!expiringUsers.length){expiryDiv.innerHTML=`<p style="color:var(--success);">No memberships expiring in 7 days. ✓</p>`;return;}
+  expiryDiv.innerHTML=`<table><thead><tr><th>Name</th><th>Mobile</th><th>Expiry</th><th>Days Left</th><th>Action</th></tr></thead><tbody>${
+    expiringUsers.map(u=>{const d=Math.ceil((new Date(u.membershipExpiry)-Date.now())/(86400000));return`<tr><td>${u.name}</td><td><a href="tel:${u.mobile}" style="color:var(--primary);">${u.mobile}</a></td><td>${u.membershipExpiry}</td><td style="color:${d<=2?'var(--danger)':'var(--warning)'};">${d} days</td><td><a href="https://wa.me/${u.mobile.replace(/\D/g,'')}" target="_blank" class="btn btn-success btn-sm">WhatsApp</a></td></tr>`;}).join('')
+  }</tbody></table>`;
+}
+function renderMembers(){
+  const users=DB.getUsers();const search=(document.getElementById('member-search')?.value||'').toLowerCase();
+  const filtered=search?users.filter(u=>u.name.toLowerCase().includes(search)||u.username.toLowerCase().includes(search)||u.mobile.includes(search)):users;
+  const tbody=document.getElementById('members-tbody');
+  tbody.innerHTML=filtered.map((u,i)=>{
+    const fees=DB.getFees().filter(f=>f.userId===u.id).sort((a,b)=>b.createdAt-a.createdAt);
+    const lastFee=fees[0];
+    const daysLeft=u.membershipExpiry?Math.ceil((new Date(u.membershipExpiry)-Date.now())/(86400000)):null;
+    const statusBadge=u.isMember?`<span class="badge badge-active">Active</span>`:`<span class="badge badge-visitor">Visitor</span>`;
+    return`<tr>
+      <td>${i+1}</td>
+      <td><strong>${u.name}</strong></td>
+      <td>${u.username}</td>
+      <td><a href="tel:${u.mobile}" style="color:var(--primary);">${u.mobile}</a></td>
+      <td>${u.height?u.height+'cm':'—'}</td>
+      <td>${u.weight?u.weight+'kg':'—'}</td>
+      <td>${u.gymJoinDate||'—'}</td>
+      <td>${statusBadge}</td>
+      <td style="color:${daysLeft!==null&&daysLeft<=7?'var(--danger)':'var(--text2)'};">${u.membershipExpiry||'—'}${daysLeft!==null?` (${daysLeft}d)`:''}` </td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-sm" style="background:var(--primary);color:#fff;" onclick="viewMember('${u.id}')">View</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteMember('${u.id}')">Del</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function viewMember(id){
+  const users=DB.getUsers();const u=users.find(x=>x.id===id);if(!u)return;
+  const fees=DB.getFees().filter(f=>f.userId===id).sort((a,b)=>b.createdAt-a.createdAt);
+  openModal(`<h3>👤 ${u.name}</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+      <div><label style="font-size:11px;color:var(--text3);">USERNAME</label><p>${u.username}</p></div>
+      <div><label style="font-size:11px;color:var(--text3);">MOBILE</label><p>${u.mobile}</p></div>
+      <div><label style="font-size:11px;color:var(--text3);">EMAIL</label><p>${u.email||'—'}</p></div>
+      <div><label style="font-size:11px;color:var(--text3);">HEIGHT/WEIGHT</label><p>${u.height||'—'}cm / ${u.weight||'—'}kg</p></div>
+      <div><label style="font-size:11px;color:var(--text3);">GYM SINCE</label><p>${u.gymJoinDate||'—'}</p></div>
+      <div><label style="font-size:11px;color:var(--text3);">STATUS</label><p>${u.isMember?'✅ Member':'👤 Visitor'}</p></div>
+      <div><label style="font-size:11px;color:var(--text3);">EXPIRY</label><p>${u.membershipExpiry||'—'}</p></div>
+      <div><label style="font-size:11px;color:var(--text3);">REGISTERED</label><p>${new Date(u.createdAt||Date.now()).toLocaleDateString()}</p></div>
+    </div>
+    <h4 style="color:var(--primary);margin-bottom:8px;">Fee History (${fees.length} records)</h4>
+    ${fees.length?`<table><thead><tr><th>Plan</th><th>Amount</th><th>Start</th><th>Expiry</th><th>Method</th></tr></thead><tbody>
+      ${fees.map(f=>`<tr><td>${f.plan}</td><td>₹${f.amount}</td><td>${f.startDate||'—'}</td><td>${f.expiryDate||'—'}</td><td>${f.paymentMethod||'—'}</td></tr>`).join('')}
+    </tbody></table>`:'<p style="color:var(--text3);">No fee records.</p>'}
+    <div style="margin-top:16px;">
+      <div class="form-group"><label>Update Membership Status</label>
+        <select class="form-control" id="member-status-${u.id}">
+          <option value="false" ${!u.isMember?'selected':''}>Visitor</option>
+          <option value="true" ${u.isMember?'selected':''}>Active Member</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Membership Expiry Date</label>
+        <input type="date" class="form-control" id="member-expiry-${u.id}" value="${u.membershipExpiry||''}">
+      </div>
+      <button class="btn btn-success" onclick="updateMemberStatus('${u.id}')">Update Member</button>
+    </div>`);
+}
+function updateMemberStatus(id){
+  const users=DB.getUsers();const idx=users.findIndex(u=>u.id===id);if(idx<0)return;
+  users[idx].isMember=document.getElementById('member-status-'+id).value==='true';
+  users[idx].membershipExpiry=document.getElementById('member-expiry-'+id).value||null;
+  DB.saveUsers(users);closeModal();renderMembers();showToast('Member updated!');
+}
+function deleteMember(id){if(!confirm('Delete this member? This cannot be undone.'))return;const users=DB.getUsers().filter(u=>u.id!==id);DB.saveUsers(users);renderMembers();showToast('Member deleted!');}
+function exportMembers(){
+  const users=DB.getUsers();
+  const csv=['Name,Username,Mobile,Email,Height,Weight,GymSince,Status,Expiry,Registered',...users.map(u=>`"${u.name}","${u.username}","${u.mobile}","${u.email||''}","${u.height||''}","${u.weight||''}","${u.gymJoinDate||''}","${u.isMember?'Member':'Visitor'}","${u.membershipExpiry||''}","${new Date(u.createdAt||Date.now()).toLocaleDateString()}"`)] .join('\n');
+  download('phc_members.csv',csv,'text/csv');
+}
+function renderFees(){
+  const fees=DB.getFees().sort((a,b)=>b.createdAt-a.createdAt);const users=DB.getUsers();
+  document.getElementById('fees-tbody').innerHTML=fees.map(f=>{
+    const u=users.find(x=>x.id===f.userId);
+    return`<tr><td>${u?u.name:'Unknown'}</td><td>${f.plan}</td><td>₹${f.amount}</td><td>${f.startDate||'—'}</td><td>${f.expiryDate||'—'}</td><td>${f.paymentMethod||'—'}</td><td>${f.createdBy||'Admin'}</td><td><button class="btn btn-danger btn-sm" onclick="deleteFee('${f.id}')">Del</button></td></tr>`;
+  }).join('');
+}
+function openAddFee(){
+  const users=DB.getUsers();
+  openModal(`<h3>➕ Add Fee Record</h3>
+    <div class="form-group"><label>Member</label>
+      <select class="form-control" id="fee-user">
+        ${users.map(u=>`<option value="${u.id}">${u.name} (${u.mobile})</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Plan</label>
+        <select class="form-control" id="fee-plan" onchange="autoFillFee()">
+          <option value="1 Month (₹500)">1 Month - ₹500</option>
+          <option value="3 Months (₹1500)">3 Months - ₹1500</option>
+          <option value="6 Months (₹2400)">6 Months - ₹2400</option>
+          <option value="Custom">Custom</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Amount (₹)</label><input type="number" class="form-control" id="fee-amount" value="500"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Start Date</label><input type="date" class="form-control" id="fee-start"></div>
+      <div class="form-group"><label>Expiry Date</label><input type="date" class="form-control" id="fee-expiry"></div>
+    </div>
+    <div class="form-group"><label>Payment Method</label>
+      <select class="form-control" id="fee-method">
+        <option value="cash">Cash</option><option value="online">Online/UPI</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Notes (optional)</label><input type="text" class="form-control" id="fee-notes" placeholder="Any notes..."></div>
+    <button class="btn btn-success" onclick="saveFee()">Save Fee Record</button>`);
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('fee-start').value=today;
+  autoFillFee();
+}
+function autoFillFee(){
+  const plan=document.getElementById('fee-plan')?.value;
+  const startInput=document.getElementById('fee-start');const amtInput=document.getElementById('fee-amount');const expiryInput=document.getElementById('fee-expiry');
+  const amounts={'1 Month (₹500)':500,'3 Months (₹1500)':1500,'6 Months (₹2400)':2400};
+  const durations={'1 Month (₹500)':1,'3 Months (₹1500)':3,'6 Months (₹2400)':6};
+  if(amounts[plan])amtInput.value=amounts[plan];
+  if(durations[plan]&&startInput.value){const d=new Date(startInput.value);d.setMonth(d.getMonth()+durations[plan]);expiryInput.value=d.toISOString().split('T')[0];}
+}
+function saveFee(){
+  const userId=document.getElementById('fee-user')?.value;const plan=document.getElementById('fee-plan')?.value;
+  const amount=parseInt(document.getElementById('fee-amount')?.value)||0;
+  const startDate=document.getElementById('fee-start')?.value;const expiryDate=document.getElementById('fee-expiry')?.value;
+  const method=document.getElementById('fee-method')?.value;const notes=document.getElementById('fee-notes')?.value;
+  const fees=DB.getFees();
+  fees.push({id:'f'+Date.now(),userId,plan,amount,startDate,expiryDate,paymentMethod:method,notes,createdBy:currentAdmin?.username||'admin',createdAt:Date.now()});
+  DB.saveFees(fees);
+  // Update user membership
+  const users=DB.getUsers();const idx=users.findIndex(u=>u.id===userId);
+  if(idx>=0){users[idx].isMember=true;users[idx].membershipExpiry=expiryDate;DB.saveUsers(users);}
+  closeModal();renderFees();showToast('Fee record saved!');
+}
+function deleteFee(id){if(!confirm('Delete this fee record?'))return;const fees=DB.getFees().filter(f=>f.id!==id);DB.saveFees(fees);renderFees();}
+function exportFees(){
+  const fees=DB.getFees();const users=DB.getUsers();
+  const csv=['Member,Mobile,Plan,Amount,StartDate,ExpiryDate,PaymentMethod,RecordedBy,Date',...fees.map(f=>{const u=users.find(x=>x.id===f.userId);return`"${u?u.name:'Unknown'}","${u?u.mobile:''}","${f.plan}","${f.amount}","${f.startDate||''}","${f.expiryDate||''}","${f.paymentMethod||''}","${f.createdBy||''}","${new Date(f.createdAt).toLocaleDateString()}"`;})].join('\n');
+  download('phc_fees.csv',csv,'text/csv');
+}
+function renderNoticesAdmin(){
+  const notices=DB.getNotices().sort((a,b)=>b.createdAt-a.createdAt);
+  const div=document.getElementById('notices-list');
+  div.innerHTML=notices.map(n=>`<div class="card" style="margin-bottom:12px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
+      <div><h4 style="color:var(--primary);">${n.isImportant?'⚠️ ':''} ${n.title}</h4>
+        <p style="color:var(--text2);font-size:13px;margin-top:4px;">${n.content.substring(0,100)}${n.content.length>100?'...':''}</p>
+        <p style="font-size:11px;color:var(--text3);margin-top:4px;">${new Date(n.createdAt).toLocaleDateString()}</p>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-warning btn-sm" onclick="editNotice('${n.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteNotice('${n.id}')">Delete</button>
+      </div>
+    </div>
+  </div>`).join('');
+}
+function openAddNotice(){
+  openModal(`<h3>➕ Add Notice</h3>
+    <div class="form-group"><label>Title</label><input type="text" class="form-control" id="n-title" placeholder="Notice title"></div>
+    <div class="form-group"><label>Content</label><textarea class="form-control" id="n-content" rows="4" placeholder="Notice content..."></textarea></div>
+    <div class="form-group"><label><input type="checkbox" id="n-important"> Mark as Important</label></div>
+    <button class="btn btn-success" onclick="saveNotice()">Publish Notice</button>`);
+}
+function saveNotice(id=null){
+  const title=document.getElementById('n-title')?.value.trim();
+  const content=document.getElementById('n-content')?.value.trim();
+  if(!title||!content){alert('Please fill title and content.');return;}
+  const isImportant=document.getElementById('n-important')?.checked||false;
+  const notices=DB.getNotices();
+  if(id){const idx=notices.findIndex(n=>n.id===id);if(idx>=0){notices[idx].title=title;notices[idx].content=content;notices[idx].isImportant=isImportant;}}
+  else notices.push({id:'nc'+Date.now(),title,content,isImportant,createdAt:Date.now(),reactions:{}});
+  DB.saveNotices(notices);
+  // Broadcast notification
+  broadcastNotification('📢 New Notice: '+title,'📢');
+  closeModal();renderNoticesAdmin();showToast('Notice published!');
+}
+function editNotice(id){
+  const n=DB.getNotices().find(x=>x.id===id);if(!n)return;
+  openModal(`<h3>✏️ Edit Notice</h3>
+    <div class="form-group"><label>Title</label><input type="text" class="form-control" id="n-title" value="${n.title}"></div>
+    <div class="form-group"><label>Content</label><textarea class="form-control" id="n-content" rows="4">${n.content}</textarea></div>
+    <div class="form-group"><label><input type="checkbox" id="n-important" ${n.isImportant?'checked':''}> Mark as Important</label></div>
+    <button class="btn btn-success" onclick="saveNotice('${id}')">Update Notice</button>`);
+}
+function deleteNotice(id){if(!confirm('Delete this notice?'))return;const notices=DB.getNotices().filter(n=>n.id!==id);DB.saveNotices(notices);renderNoticesAdmin();}
+function renderWorkoutsAdmin(){
+  const workouts=DB.getWorkouts();
+  const div=document.getElementById('workouts-list');
+  div.innerHTML=workouts.map(w=>`<div class="card" style="margin-bottom:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+      <div><strong style="color:var(--primary);">${w.name_en}</strong> / <span style="color:var(--text3);">${w.name_hi}</span>
+        <span class="badge" style="background:rgba(0,180,255,0.1);color:var(--primary);margin-left:8px;">${w.category}</span>
+        <p style="font-size:12px;color:var(--text3);margin-top:4px;">💪 ${w.muscles} | ${w.sets}</p>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-warning btn-sm" onclick="editWorkout('${w.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteWorkout('${w.id}')">Delete</button>
+      </div>
+    </div>
+  </div>`).join('');
+}
+function openAddWorkout(){
+  openModal(`<h3>➕ Add Workout</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Name (English)</label><input type="text" class="form-control" id="w-name-en" placeholder="e.g. Bench Press"></div>
+      <div class="form-group"><label>Name (Hindi)</label><input type="text" class="form-control" id="w-name-hi" placeholder="e.g. बेंच प्रेस"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Category</label>
+        <select class="form-control" id="w-cat"><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option><option value="common">Most Common</option></select>
+      </div>
+      <div class="form-group"><label>Muscles</label><input type="text" class="form-control" id="w-muscles" placeholder="e.g. Chest, Triceps"></div>
+    </div>
+    <div class="form-group"><label>Description (English)</label><textarea class="form-control" id="w-desc-en" rows="2"></textarea></div>
+    <div class="form-group"><label>Description (Hindi)</label><textarea class="form-control" id="w-desc-hi" rows="2"></textarea></div>
+    <div class="form-group"><label>Sets & Reps</label><input type="text" class="form-control" id="w-sets" placeholder="e.g. 3 Sets × 12 Reps"></div>
+    <div class="form-group"><label>Workout Image</label><input type="file" class="form-control" id="w-image" accept="image/*"></div>
+    <button class="btn btn-success" onclick="saveWorkout()">Save Workout</button>`);
+}
+function saveWorkout(id=null){
+  const nameEn=document.getElementById('w-name-en')?.value.trim();
+  if(!nameEn){alert('Name required');return;}
+  const imageFile=document.getElementById('w-image')?.files[0];
+  const save=(imgData)=>{
+    const workouts=DB.getWorkouts();
+    const obj={id:id||'w'+Date.now(),name_en:nameEn,name_hi:document.getElementById('w-name-hi')?.value.trim()||nameEn,category:document.getElementById('w-cat')?.value||'beginner',muscles:document.getElementById('w-muscles')?.value.trim()||'',description_en:document.getElementById('w-desc-en')?.value.trim()||'',description_hi:document.getElementById('w-desc-hi')?.value.trim()||'',howTo_en:[],howTo_hi:[],sets:document.getElementById('w-sets')?.value.trim()||'',image:imgData||null};
+    if(id){const idx=workouts.findIndex(w=>w.id===id);if(idx>=0)workouts[idx]={...workouts[idx],...obj};}
+    else workouts.push(obj);
+    DB.saveWorkouts(workouts);closeModal();renderWorkoutsAdmin();showToast('Workout saved!');
+  };
+  if(imageFile){const r=new FileReader();r.onload=e=>save(e.target.result);r.readAsDataURL(imageFile);}else save(null);
+}
+function editWorkout(id){
+  const w=DB.getWorkouts().find(x=>x.id===id);if(!w)return;
+  openModal(`<h3>✏️ Edit Workout: ${w.name_en}</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Name (English)</label><input type="text" class="form-control" id="w-name-en" value="${w.name_en}"></div>
+      <div class="form-group"><label>Name (Hindi)</label><input type="text" class="form-control" id="w-name-hi" value="${w.name_hi||''}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Category</label>
+        <select class="form-control" id="w-cat"><option value="beginner" ${w.category==='beginner'?'selected':''}>Beginner</option><option value="intermediate" ${w.category==='intermediate'?'selected':''}>Intermediate</option><option value="advanced" ${w.category==='advanced'?'selected':''}>Advanced</option><option value="common" ${w.category==='common'?'selected':''}>Most Common</option></select>
+      </div>
+      <div class="form-group"><label>Muscles</label><input type="text" class="form-control" id="w-muscles" value="${w.muscles||''}"></div>
+    </div>
+    <div class="form-group"><label>Description (English)</label><textarea class="form-control" id="w-desc-en" rows="2">${w.description_en||''}</textarea></div>
+    <div class="form-group"><label>Description (Hindi)</label><textarea class="form-control" id="w-desc-hi" rows="2">${w.description_hi||''}</textarea></div>
+    <div class="form-group"><label>Sets & Reps</label><input type="text" class="form-control" id="w-sets" value="${w.sets||''}"></div>
+    <div class="form-group"><label>New Image (optional)</label><input type="file" class="form-control" id="w-image" accept="image/*"></div>
+    <button class="btn btn-success" onclick="saveWorkout('${id}')">Update Workout</button>`);
+}
+function deleteWorkout(id){if(!confirm('Delete this workout?'))return;const w=DB.getWorkouts().filter(x=>x.id!==id);DB.saveWorkouts(w);renderWorkoutsAdmin();}
+function renderDietAdmin(){
+  const diet=DB.getDiet();
+  const div=document.getElementById('diet-list');
+  const types={veg:'🥦 Veg',nonveg:'🍗 Non-Veg',gain:'📈 Gain',loss:'📉 Loss'};
+  div.innerHTML=diet.map(d=>`<div class="card" style="margin-bottom:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+      <div><strong style="color:var(--primary);">${d.title_en}</strong> <span style="font-size:11px;background:rgba(0,180,255,0.1);color:var(--primary);padding:2px 8px;border-radius:10px;margin-left:8px;">${types[d.type]||d.type}</span></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-warning btn-sm" onclick="editDiet('${d.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteDiet('${d.id}')">Delete</button>
+      </div>
+    </div>
+  </div>`).join('');
+}
+function openAddDiet(){
+  openModal(`<h3>➕ Add Diet Plan</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Title (English)</label><input type="text" class="form-control" id="d-title-en" placeholder="e.g. Veg Muscle Diet"></div>
+      <div class="form-group"><label>Title (Hindi)</label><input type="text" class="form-control" id="d-title-hi" placeholder="e.g. वेज मसल डाइट"></div>
+    </div>
+    <div class="form-group"><label>Type</label>
+      <select class="form-control" id="d-type"><option value="veg">Veg</option><option value="nonveg">Non-Veg</option><option value="gain">Weight Gain</option><option value="loss">Weight Loss</option></select>
+    </div>
+    <div class="form-group"><label>Description (English)</label><textarea class="form-control" id="d-desc-en" rows="2"></textarea></div>
+    <div class="form-group"><label>Description (Hindi)</label><textarea class="form-control" id="d-desc-hi" rows="2"></textarea></div>
+    <div class="form-group"><label>Tips (English)</label><input type="text" class="form-control" id="d-tips-en"></div>
+    <div class="form-group"><label>Tips (Hindi)</label><input type="text" class="form-control" id="d-tips-hi"></div>
+    <button class="btn btn-success" onclick="saveDiet()">Save Diet Plan</button>`);
+}
+function saveDiet(id=null){
+  const titleEn=document.getElementById('d-title-en')?.value.trim();if(!titleEn){alert('Title required');return;}
+  const diet=DB.getDiet();
+  const obj={id:id||'d'+Date.now(),type:document.getElementById('d-type')?.value||'veg',title_en:titleEn,title_hi:document.getElementById('d-title-hi')?.value.trim()||titleEn,description_en:document.getElementById('d-desc-en')?.value.trim()||'',description_hi:document.getElementById('d-desc-hi')?.value.trim()||'',meals:[],tips_en:document.getElementById('d-tips-en')?.value.trim()||'',tips_hi:document.getElementById('d-tips-hi')?.value.trim()||'',image:null};
+  if(id){const idx=diet.findIndex(d=>d.id===id);if(idx>=0)diet[idx]={...diet[idx],...obj};}else diet.push(obj);
+  DB.saveDiet(diet);closeModal();renderDietAdmin();showToast('Diet plan saved!');
+}
+function editDiet(id){const d=DB.getDiet().find(x=>x.id===id);if(!d)return;openModal(`<h3>✏️ Edit: ${d.title_en}</h3><div class="form-row"><div class="form-group"><label>Title EN</label><input type="text" class="form-control" id="d-title-en" value="${d.title_en}"></div><div class="form-group"><label>Title HI</label><input type="text" class="form-control" id="d-title-hi" value="${d.title_hi||''}"></div></div><div class="form-group"><label>Type</label><select class="form-control" id="d-type"><option value="veg" ${d.type==='veg'?'selected':''}>Veg</option><option value="nonveg" ${d.type==='nonveg'?'selected':''}>Non-Veg</option><option value="gain" ${d.type==='gain'?'selected':''}>Weight Gain</option><option value="loss" ${d.type==='loss'?'selected':''}>Weight Loss</option></select></div><div class="form-group"><label>Desc EN</label><textarea class="form-control" id="d-desc-en" rows="2">${d.description_en||''}</textarea></div><div class="form-group"><label>Desc HI</label><textarea class="form-control" id="d-desc-hi" rows="2">${d.description_hi||''}</textarea></div><div class="form-group"><label>Tips EN</label><input type="text" class="form-control" id="d-tips-en" value="${d.tips_en||''}"></div><div class="form-group"><label>Tips HI</label><input type="text" class="form-control" id="d-tips-hi" value="${d.tips_hi||''}"></div><button class="btn btn-success" onclick="saveDiet('${id}')">Update</button>`);}
+function deleteDiet(id){if(!confirm('Delete?'))return;DB.saveDiet(DB.getDiet().filter(d=>d.id!==id));renderDietAdmin();}
+function renderRulesAdmin(){
+  const rules=DB.getRules().sort((a,b)=>a.order-b.order);
+  const div=document.getElementById('rules-admin-list');
+  div.innerHTML=rules.map(r=>`<div class="card" style="margin-bottom:10px;${r.isSpecial?'border-color:var(--danger);':''}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+      <div>${r.icon} <strong style="color:${r.isSpecial?'var(--danger)':'var(--primary)'};">#${r.order}</strong> ${r.text_en.substring(0,80)}...</div>
+      <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button class="btn btn-warning btn-sm" onclick="editRule('${r.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteRule('${r.id}')">Del</button>
+      </div>
+    </div>
+  </div>`).join('');
+}
+function openAddRule(){
+  openModal(`<h3>➕ Add Rule</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Icon (emoji)</label><input type="text" class="form-control" id="r-icon" value="📌" style="font-size:20px;text-align:center;"></div>
+      <div class="form-group"><label>Category</label><select class="form-control" id="r-cat"><option value="general">General</option><option value="etiquette">Etiquette</option><option value="safety">Safety</option><option value="special">Special</option></select></div>
+    </div>
+    <div class="form-group"><label>Rule (English)</label><textarea class="form-control" id="r-text-en" rows="3" placeholder="Rule in English..."></textarea></div>
+    <div class="form-group"><label>Rule (Hindi)</label><textarea class="form-control" id="r-text-hi" rows="3" placeholder="नियम हिंदी में..."></textarea></div>
+    <div class="form-group"><label>Order Number</label><input type="number" class="form-control" id="r-order" value="${DB.getRules().length+1}"></div>
+    <div class="form-group"><label><input type="checkbox" id="r-special"> Mark as Special/Important Rule</label></div>
+    <button class="btn btn-success" onclick="saveRule()">Save Rule</button>`);
+}
+function saveRule(id=null){
+  const textEn=document.getElementById('r-text-en')?.value.trim();if(!textEn){alert('Rule text required');return;}
+  const rules=DB.getRules();
+  const obj={id:id||'r'+Date.now(),icon:document.getElementById('r-icon')?.value||'📌',category:document.getElementById('r-cat')?.value||'general',text_en:textEn,text_hi:document.getElementById('r-text-hi')?.value.trim()||textEn,order:parseInt(document.getElementById('r-order')?.value)||rules.length+1,isSpecial:document.getElementById('r-special')?.checked||false};
+  if(id){const idx=rules.findIndex(r=>r.id===id);if(idx>=0)rules[idx]={...rules[idx],...obj};}else rules.push(obj);
+  DB.saveRules(rules);closeModal();renderRulesAdmin();showToast('Rule saved!');
+}
+function editRule(id){const r=DB.getRules().find(x=>x.id===id);if(!r)return;openModal(`<h3>✏️ Edit Rule</h3><div class="form-row"><div class="form-group"><label>Icon</label><input type="text" class="form-control" id="r-icon" value="${r.icon}" style="font-size:20px;text-align:center;"></div><div class="form-group"><label>Category</label><select class="form-control" id="r-cat"><option value="general" ${r.category==='general'?'selected':''}>General</option><option value="etiquette" ${r.category==='etiquette'?'selected':''}>Etiquette</option><option value="safety" ${r.category==='safety'?'selected':''}>Safety</option><option value="special" ${r.category==='special'?'selected':''}>Special</option></select></div></div><div class="form-group"><label>Rule (English)</label><textarea class="form-control" id="r-text-en" rows="3">${r.text_en}</textarea></div><div class="form-group"><label>Rule (Hindi)</label><textarea class="form-control" id="r-text-hi" rows="3">${r.text_hi||''}</textarea></div><div class="form-group"><label>Order</label><input type="number" class="form-control" id="r-order" value="${r.order}"></div><div class="form-group"><label><input type="checkbox" id="r-special" ${r.isSpecial?'checked':''}> Special Rule</label></div><button class="btn btn-success" onclick="saveRule('${id}')">Update Rule</button>`);}
+function deleteRule(id){if(!confirm('Delete?'))return;DB.saveRules(DB.getRules().filter(r=>r.id!==id));renderRulesAdmin();}
+function renderStoreAdmin(){
+  const supp=DB.getSupplements();
+  const div=document.getElementById('store-admin-list');
+  div.innerHTML=supp.map(s=>`<div class="card" style="margin-bottom:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+      <div><strong style="color:var(--primary);">${s.name_en}</strong> / <span style="color:var(--text3);">${s.name_hi||''}</span>
+        <span class="badge" style="margin-left:8px;background:rgba(0,180,255,0.1);color:var(--primary);">${s.category}</span>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-warning btn-sm" onclick="editSupplement('${s.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteSupplement('${s.id}')">Del</button>
+      </div>
+    </div>
+  </div>`).join('');
+}
+function openAddSupplement(){
+  openModal(`<h3>➕ Add Product/Supplement</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Name (English)</label><input type="text" class="form-control" id="s-name-en" placeholder="e.g. Whey Protein"></div>
+      <div class="form-group"><label>Name (Hindi)</label><input type="text" class="form-control" id="s-name-hi" placeholder="e.g. व्हे प्रोटीन"></div>
+    </div>
+    <div class="form-group"><label>Category</label>
+      <select class="form-control" id="s-cat"><option value="protein">Protein</option><option value="creatine">Creatine</option><option value="vitamins">Vitamins</option><option value="tools">Equipment/Tools</option><option value="other">Other</option></select>
+    </div>
+    <div class="form-group"><label>Description (English)</label><textarea class="form-control" id="s-desc-en" rows="2"></textarea></div>
+    <div class="form-group"><label>Description (Hindi)</label><textarea class="form-control" id="s-desc-hi" rows="2"></textarea></div>
+    <div class="form-group"><label>Usage (English)</label><input type="text" class="form-control" id="s-usage-en" placeholder="How to use..."></div>
+    <div class="form-group"><label>Usage (Hindi)</label><input type="text" class="form-control" id="s-usage-hi" placeholder="कैसे उपयोग करें..."></div>
+    <div class="form-row">
+      <div class="form-group"><label>Dosage (English)</label><input type="text" class="form-control" id="s-dosage-en" placeholder="e.g. 1 scoop/day"></div>
+      <div class="form-group"><label>Dosage (Hindi)</label><input type="text" class="form-control" id="s-dosage-hi" placeholder="उदा. 1 स्कूप/दिन"></div>
+    </div>
+    <div class="form-group"><label>Product Image</label><input type="file" class="form-control" id="s-image" accept="image/*"></div>
+    <button class="btn btn-success" onclick="saveSupplement()">Save Product</button>`);
+}
+function saveSupplement(id=null){
+  const nameEn=document.getElementById('s-name-en')?.value.trim();if(!nameEn){alert('Name required');return;}
+  const imageFile=document.getElementById('s-image')?.files[0];
+  const save=(imgData)=>{
+    const supp=DB.getSupplements();
+    const obj={id:id||'s'+Date.now(),name_en:nameEn,name_hi:document.getElementById('s-name-hi')?.value.trim()||nameEn,category:document.getElementById('s-cat')?.value||'other',description_en:document.getElementById('s-desc-en')?.value.trim()||'',description_hi:document.getElementById('s-desc-hi')?.value.trim()||'',usage_en:document.getElementById('s-usage-en')?.value.trim()||'',usage_hi:document.getElementById('s-usage-hi')?.value.trim()||'',dosage_en:document.getElementById('s-dosage-en')?.value.trim()||'',dosage_hi:document.getElementById('s-dosage-hi')?.value.trim()||'',image:imgData||null,price:0};
+    if(id){const idx=supp.findIndex(s=>s.id===id);if(idx>=0)supp[idx]={...supp[idx],...obj};}else supp.push(obj);
+    DB.saveSupplements(supp);closeModal();renderStoreAdmin();showToast('Product saved!');
+  };
+  if(imageFile){const r=new FileReader();r.onload=e=>save(e.target.result);r.readAsDataURL(imageFile);}else save(null);
+}
+function editSupplement(id){const s=DB.getSupplements().find(x=>x.id===id);if(!s)return;openModal(`<h3>✏️ Edit: ${s.name_en}</h3><div class="form-row"><div class="form-group"><label>Name EN</label><input type="text" class="form-control" id="s-name-en" value="${s.name_en}"></div><div class="form-group"><label>Name HI</label><input type="text" class="form-control" id="s-name-hi" value="${s.name_hi||''}"></div></div><div class="form-group"><label>Category</label><select class="form-control" id="s-cat"><option value="protein" ${s.category==='protein'?'selected':''}>Protein</option><option value="creatine" ${s.category==='creatine'?'selected':''}>Creatine</option><option value="vitamins" ${s.category==='vitamins'?'selected':''}>Vitamins</option><option value="tools" ${s.category==='tools'?'selected':''}>Tools</option><option value="other" ${s.category==='other'?'selected':''}>Other</option></select></div><div class="form-group"><label>Desc EN</label><textarea class="form-control" id="s-desc-en" rows="2">${s.description_en||''}</textarea></div><div class="form-group"><label>Desc HI</label><textarea class="form-control" id="s-desc-hi" rows="2">${s.description_hi||''}</textarea></div><div class="form-group"><label>Usage EN</label><input type="text" class="form-control" id="s-usage-en" value="${s.usage_en||''}"></div><div class="form-group"><label>Usage HI</label><input type="text" class="form-control" id="s-usage-hi" value="${s.usage_hi||''}"></div><div class="form-row"><div class="form-group"><label>Dosage EN</label><input type="text" class="form-control" id="s-dosage-en" value="${s.dosage_en||''}"></div><div class="form-group"><label>Dosage HI</label><input type="text" class="form-control" id="s-dosage-hi" value="${s.dosage_hi||''}"></div></div><div class="form-group"><label>New Image (optional)</label><input type="file" class="form-control" id="s-image" accept="image/*"></div><button class="btn btn-success" onclick="saveSupplement('${id}')">Update Product</button>`);}
+function deleteSupplement(id){if(!confirm('Delete?'))return;DB.saveSupplements(DB.getSupplements().filter(s=>s.id!==id));renderStoreAdmin();}
+function loadSettings(){
+  const settings=DB.getSettings();
+  const el=document.getElementById('gym-timing');if(el)el.value=settings.gymTiming||'';
+  const links=settings.socialLinks||{};
+  ['whatsapp','youtube','instagram','telegram','twitter'].forEach(k=>{const el2=document.getElementById('s-'+k);if(el2)el2.value=links[k]||'';});
+}
+function saveGymTiming(){
+  const timing=document.getElementById('gym-timing').value;
+  const settings=DB.getSettings();settings.gymTiming=timing;DB.saveSettings(settings);
+  showToast('Gym timing updated!');broadcastNotification('⏰ Gym timing has been updated!','⏰');
+}
+function saveSocialLinks(){
+  const settings=DB.getSettings();
+  settings.socialLinks={whatsapp:document.getElementById('s-whatsapp').value.trim(),youtube:document.getElementById('s-youtube').value.trim(),instagram:document.getElementById('s-instagram').value.trim(),telegram:document.getElementById('s-telegram').value.trim(),twitter:document.getElementById('s-twitter').value.trim()};
+  DB.saveSettings(settings);showToast('Social links saved!');
+}
+// ─── SECRET KEY MANAGEMENT ─────────────────────────────────────────────
+function generateSecretKey(){
+  const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$!';
+  let key='PHC_';
+  for(let i=0;i<20;i++)key+=chars[Math.floor(Math.random()*chars.length)];
+  return key;
+}
+function addSecretKey(){
+  const inp=document.getElementById('new-secret-key');if(!inp)return;
+  const key=inp.value.trim();if(!key){showToast('Enter a key!','error');return;}
+  const keys=getSecretKeys();
+  if(keys.includes(key)){showToast('Key already exists!','warning');return;}
+  keys.push(key);saveSecretKeys(keys);renderAdmins();showToast('Secret key added!');inp.value='';
+}
+function deleteSecretKey(idx){
+  if(!confirm('Delete this secret key?'))return;
+  const keys=getSecretKeys();keys.splice(idx,1);saveSecretKeys(keys);renderAdmins();showToast('Key deleted.');
+}
+function generateAndFillKey(){
+  const k=generateSecretKey();
+  document.getElementById('new-secret-key').value=k;
+}
+
+function renderAdmins(){
+  const admins=getAdmins();
+  const div=document.getElementById('admins-list');
+  div.innerHTML=admins.map(a=>`<div class="card" style="margin-bottom:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div><strong style="color:var(--primary);">${a.name}</strong> <span style="color:var(--text3);">@${a.username}</span> <span class="badge badge-active">${a.role||'admin'}</span></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-warning btn-sm" onclick="changeAdminPassword('${a.username}')">Change Password</button>
+        ${a.username!=='Prakashkumar'&&a.username!=='Ayushkumar'?`<button class="btn btn-danger btn-sm" onclick="deleteAdmin('${a.username}')">Delete</button>`:''}
+      </div>
+    </div>
+  </div>`).join('');
+}
+function openAddAdmin(){
+  openModal(`<h3>➕ Add Admin User</h3>
+    <div class="form-group"><label>Full Name</label><input type="text" class="form-control" id="na-name" placeholder="Admin name"></div>
+    <div class="form-group"><label>Username</label><input type="text" class="form-control" id="na-username" placeholder="Username (no spaces)"></div>
+    <div class="form-group"><label>Password</label><input type="password" class="form-control" id="na-pass" placeholder="Password"></div>
+    <div class="form-group"><label>Role</label><input type="text" class="form-control" id="na-role" placeholder="e.g. manager, trainer"></div>
+    <button class="btn btn-success" onclick="saveAdmin()">Add Admin</button>`);
+}
+function saveAdmin(){
+  const name=document.getElementById('na-name')?.value.trim();const username=document.getElementById('na-username')?.value.trim();
+  const pass=document.getElementById('na-pass')?.value;const role=document.getElementById('na-role')?.value.trim()||'admin';
+  if(!name||!username||!pass){alert('Fill all fields.');return;}
+  const admins=getAdmins();if(admins.find(a=>a.username.toLowerCase()===username.toLowerCase())){alert('Username taken.');return;}
+  admins.push({username,password:btoa(pass),name,role});saveAdmins(admins);closeModal();renderAdmins();showToast('Admin added!');
+}
+function changeAdminPassword(username){
+  openModal(`<h3>🔑 Change Password: ${username}</h3>
+    <div class="form-group"><label>New Password</label><input type="password" class="form-control" id="np-pass" placeholder="New password (min 6 chars)"></div>
+    <button class="btn btn-success" onclick="saveAdminPassword('${username}')">Update Password</button>`);
+}
+function saveAdminPassword(username){
+  const pass=document.getElementById('np-pass')?.value;if(!pass||pass.length<6){alert('Password must be 6+ chars.');return;}
+  const admins=getAdmins();const idx=admins.findIndex(a=>a.username===username);
+  if(idx>=0){admins[idx].password=btoa(pass);saveAdmins(admins);}closeModal();showToast('Password updated!');
+}
+function deleteAdmin(username){if(!confirm('Delete admin?'))return;saveAdmins(getAdmins().filter(a=>a.username!==username));renderAdmins();}
+function sendBroadcast(){
+  const msg=document.getElementById('notif-msg')?.value.trim();if(!msg){alert('Enter message.');return;}
+  broadcastNotification(msg,'📢');document.getElementById('notif-msg').value='';showToast('Notification sent to all users!');
+}
+function broadcastNotification(msg,icon='📢'){
+  const notifs=DB.getNotifications();
+  notifs.unshift({id:'n'+Date.now(),message:msg,icon,time:Date.now(),read:false,broadcast:true});
+  if(notifs.length>100)notifs.splice(100);DB.saveNotifications(notifs);
+}
+function openModal(html){
+  document.getElementById('a-modal-content').innerHTML=`<button class="modal-close" onclick="closeModal()">✕</button>${html}`;
+  document.getElementById('a-modal-overlay').classList.add('show');
+}
+function closeModal(){document.getElementById('a-modal-overlay').classList.remove('show');}
+function showToast(msg){
+  const t=document.createElement('div');
+  t.style.cssText=`position:fixed;bottom:24px;right:24px;background:var(--success);color:#fff;padding:12px 20px;border-radius:10px;font-weight:700;z-index:9999;font-family:var(--font-body);font-size:13px;`;
+  t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);
+}
+function download(filename,content,type){
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+content],{type}));a.download=filename;a.click();
+}
+document.getElementById('a-modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+</script>
+</body>
+</html>
