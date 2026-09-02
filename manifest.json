@@ -1,0 +1,17 @@
+﻿{
+  "name": "Power Health Club",
+  "short_name": "Power HC",
+  "description": "Power Health Club - Sahatwar, Ballia | Fit Body, Strong Mind",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a1a",
+  "theme_color": "#00b4ff",
+  "lang": "hi",
+  "icons": [
+    {"src": "Icon.jpg","sizes": "192x192","type": "image/jpeg","purpose": "any maskable"},
+    {"src": "Icon.jpg","sizes": "512x512","type": "image/jpeg","purpose": "any maskable"}
+  ],
+  "categories": ["health","fitness","sports"]
+}
